@@ -9,6 +9,7 @@ INSTRUCTIONS FOR UBUNTU
   $ python3 manage.py runserver 0.0.0.0:8000
   
   // Example
+
   $ http http://0.0.0.0:8000/users/ username='a_user' password='testing123' email='a@gmail.com' address='mux' city='mux' phone_number='911'
   
   // To view the admin panel you need to create a superuser.
