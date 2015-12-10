@@ -2,10 +2,13 @@ How to test the project by running local server
 INSTRUCTIONS FOR UBUNTU
 
   $ sudo apt-get update
+
   $ sudo apt-get install python3-pip httpie
   
   $ pip3 install django djangorestframework
+
   $ cd django-project // Note: this is the root directory of the project you cloned
+
   $ python3 manage.py runserver 0.0.0.0:8000
   
   // Example
