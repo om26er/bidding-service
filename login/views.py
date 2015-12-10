@@ -8,7 +8,7 @@ from rest_framework import status, permissions
 
 class UsersList(APIView):
 
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
         users = CustomUser.objects.all()
