@@ -1,3 +1,5 @@
+import os
+
 from login.models import CustomUser
 from login.serializers import UserSerializer
 from django.http import Http404
@@ -87,3 +89,20 @@ class UserExists(APIView):
                 data='User with name {}, does not exist'.format(user),
                 status=status.HTTP_404_NOT_FOUND
             )
+
+
+class Push(APIView):
+
+    def post(self, request, format=None):
+        _send_push_notification(request.data.get('message'))
+        return Response(data='Notification Sent', status=status.HTTP_200_OK)
+
+
+def _send_push_notification(message):
+    from gcm import GCM
+    gcm = GCM('AIzaSyDvMYsVLk80XXo_omD7mjS1TfzTNDQkqFk')
+    reg_id = 'cooGNSL0diU:APA91bGiLL3oJmeZ0Dt2_AsskSKOQQ8HfsIbZQ_J7yug96' \
+             'pSgx5oiNiUtPcfAI8mZ86I6FJXFxdXP0C5afNnUDlzbp4F8LZOOAaOKB9M' \
+             'gYIDo3OrGCmn6G_kC7GiUx2TvCDTfBVEWqo8'
+    data = {'message': message}
+    gcm.plaintext_request(registration_id=reg_id, data=data)
