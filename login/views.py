@@ -3,14 +3,14 @@ from login.serializers import UserSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import status
 
-# from login.permissions import IsOwner
+
+def _is_creator(username, request):
+    return username == str(request.user)
 
 
 class UsersList(APIView):
-
-    # permission_classes = (permissions.IsAdminUser,)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -35,8 +35,6 @@ class UsersList(APIView):
 
 class UserDetail(APIView):
 
-    permission_classes = (permissions.IsAuthenticated,)
-
     def get_object(self, username, request):
         try:
             return CustomUser.objects.get(username=username)
@@ -44,7 +42,7 @@ class UserDetail(APIView):
             raise Http404
 
     def get(self, request, username, format=None):
-        if username != request.user:
+        if not _is_creator(username, request):
             return Response(data='Only the user can access their details',
                             status=status.HTTP_403_FORBIDDEN)
         user = self.get_object(username, request)
@@ -52,7 +50,7 @@ class UserDetail(APIView):
         return Response(serializer.data)
 
     def put(self, request, username, format=None):
-        if username != request.user:
+        if not _is_creator(username, request):
             return Response(data='Only the user can change their details',
                             status=status.HTTP_403_FORBIDDEN)
         user = self.get_object(username, request)
@@ -63,9 +61,29 @@ class UserDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, username, format=None):
-        if username != request.user:
+        if not _is_creator(username, request):
             return Response(data='Only the user can delete their self',
                             status=status.HTTP_403_FORBIDDEN)
         user = self.get_object(username, request)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserExists(APIView):
+
+    def get(self, request, format=None):
+        user = request.data.get('username')
+        if not user:
+            return Response(data="'username' field not found in request",
+                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            CustomUser.objects.get(username=user)
+            return Response(
+                data='Yes, user: {}, already exists'.format(user),
+                status=status.HTTP_200_OK
+            )
+        except CustomUser.DoesNotExist:
+            return Response(
+                data='User with name {}, does not exist'.format(user),
+                status=status.HTTP_404_NOT_FOUND
+            )

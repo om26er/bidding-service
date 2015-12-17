@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from login.models import CustomUser, DummyModel
+from login.models import CustomUser
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,10 +21,3 @@ class UserSerializer(serializers.ModelSerializer):
         user.phone_number = validated_data.get('phone_number')
         user.save()
         return user
-
-
-class DummySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = DummyModel
-        fields = ('school',)
