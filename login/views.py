@@ -1,11 +1,11 @@
-import os
-
-from login.models import CustomUser
-from login.serializers import UserSerializer
+from login.models import CustomUser, ProductAd
+from login.serializers import UserSerializer, AdSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from accounts.settings import AUTH_USER_MODEL
 
 
 def _is_creator(username, request):
@@ -13,9 +13,6 @@ def _is_creator(username, request):
 
 
 class UsersList(APIView):
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
 
     def get(self, request, format=None):
         if not request.user.is_staff:
@@ -30,7 +27,7 @@ class UsersList(APIView):
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -58,7 +55,7 @@ class UserDetail(APIView):
         user = self.get_object(username, request)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=self.request.user)
+            serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -106,3 +103,54 @@ def _send_push_notification(message):
              'gYIDo3OrGCmn6G_kC7GiUx2TvCDTfBVEWqo8'
     data = {'message': message}
     gcm.plaintext_request(registration_id=reg_id, data=data)
+
+
+class UserAdsView(APIView):
+
+    def put(self, request, username, format=None):
+        if str(request.user) != username:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = AdSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, username, format=None):
+        if str(request.user) != username:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        ads = ProductAd.objects.all()
+        serializer = AdSerializer(ads, many=True)
+        return Response(serializer.data)
+
+
+class UserAdView(APIView):
+
+    def get_ad(self, pk):
+        try:
+            return ProductAd.objects.get(pk=pk)
+        except ProductAd.DoesNotExist:
+            raise Http404
+
+    def get(self, request, username, pk, format=None):
+        ad = self.get_ad(pk)
+        serializer = AdSerializer(ad)
+        return Response(serializer.data)
+
+
+class AdsView(APIView):
+
+    # def json_to_keyword_arguments(self, json_data):
+
+    def get_ads(self, **kwargs):
+        try:
+            return ProductAd.objects.filter(**kwargs)
+        except ProductAd.DoesNotExist:
+            raise Http404
+
+    def get(self, request, format=None):
+        ads = self.get_ads(**request.data)
+        serializer = AdSerializer(ads, many=True)
+        return Response(serializer.data)
