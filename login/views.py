@@ -5,8 +5,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from accounts.settings import AUTH_USER_MODEL
-
 
 def _is_creator(username, request):
     return username == str(request.user)
@@ -34,7 +32,7 @@ class UsersList(APIView):
 
 class UserDetail(APIView):
 
-    def get_object(self, username, request):
+    def get_user(self, username, request):
         try:
             return CustomUser.objects.get(username=username)
         except CustomUser.DoesNotExist:
@@ -44,7 +42,7 @@ class UserDetail(APIView):
         if not _is_creator(username, request):
             return Response(data='Only the user can access their details',
                             status=status.HTTP_403_FORBIDDEN)
-        user = self.get_object(username, request)
+        user = self.get_user(username, request)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
@@ -52,7 +50,7 @@ class UserDetail(APIView):
         if not _is_creator(username, request):
             return Response(data='Only the user can change their details',
                             status=status.HTTP_403_FORBIDDEN)
-        user = self.get_object(username, request)
+        user = self.get_user(username, request)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -63,7 +61,7 @@ class UserDetail(APIView):
         if not _is_creator(username, request):
             return Response(data='Only the user can delete their self',
                             status=status.HTTP_403_FORBIDDEN)
-        user = self.get_object(username, request)
+        user = self.get_user(username, request)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -114,6 +112,7 @@ class UserAdsView(APIView):
         serializer = AdSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=request.user)
+            delete_ad(serializer.data.get('id'), 60)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -142,8 +141,6 @@ class UserAdView(APIView):
 
 class AdsView(APIView):
 
-    # def json_to_keyword_arguments(self, json_data):
-
     def get_ads(self, **kwargs):
         try:
             return ProductAd.objects.filter(**kwargs)
@@ -154,3 +151,15 @@ class AdsView(APIView):
         ads = self.get_ads(**request.data)
         serializer = AdSerializer(ads, many=True)
         return Response(serializer.data)
+
+
+def really_delete(pk):
+    ad = ProductAd.objects.get(pk=pk)
+    ad.delete()
+    _send_push_notification('Ad expired')
+
+
+def delete_ad(pk, delay):
+    import threading
+    t = threading.Timer(float(delay), really_delete, args=(pk,))
+    t.start()
