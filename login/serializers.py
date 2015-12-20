@@ -57,3 +57,4 @@ class AdSerializer(serializers.ModelSerializer):
         fields = ('id', 'created', 'title', 'description', 'category', 'price',
                   'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6',
                   'photo7', 'photo8')
+
