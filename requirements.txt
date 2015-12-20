@@ -6,4 +6,3 @@ django==1.9
 djangorestframework==3.3.2
 psycopg2==2.6.1
 django-cors-headers==1.1.0
-Pillow==1.7.8
