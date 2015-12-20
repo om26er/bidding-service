@@ -94,8 +94,7 @@ WSGI_APPLICATION = 'accounts.wsgi:application'
 #     }
 # }
 
-DATABASES = {'default': dj_database_url.config(
-    default='postgres://ubuntu:password@128.199.125.71/bidproject')}
+DATABASES = {'default': dj_database_url.config()}
 DATABASES['default']['CONN_MAX_AGE'] = 500
 
 # Internationalization
