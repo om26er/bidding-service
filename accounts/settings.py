@@ -43,9 +43,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'login',
     'rest_framework',
     'corsheaders',
+    'login',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -81,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'accounts.wsgi.application'
+WSGI_APPLICATION = 'accounts.wsgi:application'
 
 
 # Database
