@@ -62,7 +62,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'accounts.urls'
 
-AUTH_USER_MODEL = 'login.CustomUser'
+AUTH_USER_MODEL = 'login.customuser'
 
 TEMPLATES = [
     {
