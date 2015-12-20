@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from login.models import customuser
+from login.models import CustomUser
 
 
 class UserProfileAdmin(admin.ModelAdmin):
     can_delete = False
     verbose_name_plural = 'userprofile'
 
-admin.site.register(customuser, UserProfileAdmin)
+admin.site.register(CustomUser, UserProfileAdmin)

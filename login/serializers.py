@@ -2,7 +2,7 @@ import os
 
 from rest_framework import serializers
 
-from login.models import customuser, productad
+from login.models import CustomUser, ProductAd
 from accounts.settings import MEDIA_ROOT
 
 
@@ -23,13 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(required=False)
 
     class Meta:
-        model = customuser
+        model = CustomUser
         fields = ('username', 'password', 'email', 'address', 'phone_number',
                   'city', 'photo')
 
     def create(self, validated_data):
         photo_path = _save_avatar_image_if_attached(validated_data)
-        user = customuser.objects.create_user(
+        user = CustomUser.objects.create_user(
             username=validated_data.get('username'),
             email=validated_data.get('email'),
         )
@@ -53,7 +53,7 @@ class AdSerializer(serializers.ModelSerializer):
     photo8 = serializers.ImageField(required=False)
 
     class Meta:
-        model = productad
+        model = ProductAd
         fields = ('id', 'created', 'title', 'description', 'category', 'price',
                   'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6',
                   'photo7', 'photo8')

@@ -1,4 +1,4 @@
-from login.models import customuser, productad
+from login.models import CustomUser, ProductAd
 from login.serializers import UserSerializer, AdSerializer
 from django.http import Http404
 from rest_framework.views import APIView
@@ -18,7 +18,7 @@ class UsersList(APIView):
                 data="Only Admin users allowed to get list of users",
                 status=status.HTTP_403_FORBIDDEN
             )
-        users = customuser.objects.all()
+        users = CustomUser.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
@@ -34,8 +34,8 @@ class UserDetail(APIView):
 
     def get_user(self, username, request):
         try:
-            return customuser.objects.get(username=username)
-        except customuser.DoesNotExist:
+            return CustomUser.objects.get(username=username)
+        except CustomUser.DoesNotExist:
             raise Http404
 
     def get(self, request, username, format=None):
@@ -74,12 +74,12 @@ class UserExists(APIView):
             return Response(data="'username' field not found in request",
                             status=status.HTTP_400_BAD_REQUEST)
         try:
-            customuser.objects.get(username=user)
+            CustomUser.objects.get(username=user)
             return Response(
                 data='Yes, user: {}, already exists'.format(user),
                 status=status.HTTP_200_OK
             )
-        except customuser.DoesNotExist:
+        except CustomUser.DoesNotExist:
             return Response(
                 data='User with name {}, does not exist'.format(user),
                 status=status.HTTP_404_NOT_FOUND
@@ -120,7 +120,7 @@ class UserAdsView(APIView):
         if str(request.user) != username:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        ads = productad.objects.all()
+        ads = ProductAd.objects.all()
         serializer = AdSerializer(ads, many=True)
         return Response(serializer.data)
 
@@ -129,8 +129,8 @@ class UserAdView(APIView):
 
     def get_ad(self, pk):
         try:
-            return productad.objects.get(pk=pk)
-        except productad.DoesNotExist:
+            return ProductAd.objects.get(pk=pk)
+        except ProductAd.DoesNotExist:
             raise Http404
 
     def get(self, request, username, pk, format=None):
@@ -143,8 +143,8 @@ class AdsView(APIView):
 
     def get_ads(self, **kwargs):
         try:
-            return productad.objects.filter(**kwargs)
-        except productad.DoesNotExist:
+            return ProductAd.objects.filter(**kwargs)
+        except ProductAd.DoesNotExist:
             raise Http404
 
     def get(self, request, format=None):
@@ -154,7 +154,7 @@ class AdsView(APIView):
 
 
 def really_delete(pk):
-    ad = productad.objects.get(pk=pk)
+    ad = ProductAd.objects.get(pk=pk)
     ad.delete()
     _send_push_notification('Ad expired')
 

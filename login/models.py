@@ -4,7 +4,7 @@ from django.db import models
 from accounts.settings import MEDIA_ROOT, AUTH_USER_MODEL
 
 
-class customuser(AbstractUser):
+class CustomUser(AbstractUser):
     address = models.CharField(max_length=500)
     phone_number = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
@@ -14,7 +14,7 @@ class customuser(AbstractUser):
     USERNAME_FIELD = 'username'
 
 
-class productad(models.Model):
+class ProductAd(models.Model):
     owner = models.ForeignKey(AUTH_USER_MODEL, related_name='ad')
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=70, blank=False)
