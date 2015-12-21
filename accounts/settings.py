@@ -81,20 +81,22 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'accounts.wsgi:application'
+WSGI_APPLICATION = 'accounts.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
-DATABASES = {'default': dj_database_url.config()}
+DATABASES = {'default': dj_database_url.config(
+    default='postgres://dkvtxytitilzva:Rlyos5YiZEhW2UDSpf6G3lX7wC@ec2-75-101-'
+            '143-150.compute-1.amazonaws.com:5432/dcqr8q0stmpvjp')}
 # DATABASES['default']['CONN_MAX_AGE'] = 500
 
 # Internationalization
