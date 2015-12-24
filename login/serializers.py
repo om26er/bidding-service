@@ -8,7 +8,7 @@ from accounts.settings import MEDIA_ROOT, MEDIA_URL
 
 def _save_avatar_image_if_attached(validated_data):
     photo_object = validated_data.get('photo')
-    upload_path = os.path.join(MEDIA_URL, MEDIA_ROOT)
+    upload_path = MEDIA_URL+MEDIA_ROOT
     print(upload_path)
     if photo_object:
         output_path = os.path.join(upload_path, photo_object.name)
