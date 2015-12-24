@@ -68,7 +68,7 @@ class UserDetail(APIView):
 
 class UserExists(APIView):
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         user = request.data.get('username')
         if not user:
             return Response(data="'username' field not found in request",
