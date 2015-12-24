@@ -132,6 +132,8 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 MEDIA_ROOT = '/media/'
 AWS_STORAGE_BUCKET_NAME = 'byteshaft-bidder'
 AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
-MEDIA_URL = 'https://{}/'.format(AWS_S3_CUSTOM_DOMAIN)
+MEDIA_URL = 'https://{}'.format(AWS_S3_CUSTOM_DOMAIN)
+
+MEDIA_LOCATION = MEDIA_URL+MEDIA_ROOT
 
 CORS_ORIGIN_ALLOW_ALL = True

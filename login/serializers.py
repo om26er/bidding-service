@@ -3,15 +3,14 @@ import os
 from rest_framework import serializers
 
 from login.models import CustomUser, ProductAd
-from accounts.settings import MEDIA_ROOT, MEDIA_URL
+from accounts.settings import MEDIA_ROOT, MEDIA_URL, MEDIA_LOCATION
 
 
 def _save_avatar_image_if_attached(validated_data):
     photo_object = validated_data.get('photo')
-    upload_path = MEDIA_URL+MEDIA_ROOT
-    print(upload_path)
     if photo_object:
-        output_path = os.path.join(upload_path, photo_object.name)
+        output_path = MEDIA_LOCATION + photo_object.name
+        print(output_path)
         destination = open(output_path, 'wb+')
         for chunk in photo_object.chunks():
             destination.write(chunk)
