@@ -3,13 +3,14 @@ import os
 from rest_framework import serializers
 
 from login.models import CustomUser, ProductAd
-from accounts.settings import MEDIA_ROOT
+from accounts.settings import MEDIA_ROOT, MEDIA_URL
 
 
 def _save_avatar_image_if_attached(validated_data):
     photo_object = validated_data.get('photo')
+    upload_path = os.path.join(MEDIA_URL, MEDIA_ROOT)
     if photo_object:
-        output_path = os.path.join(MEDIA_ROOT, photo_object.name)
+        output_path = os.path.join(upload_path, photo_object.name)
         destination = open(output_path, 'wb+')
         for chunk in photo_object.chunks():
             destination.write(chunk)
@@ -57,4 +58,3 @@ class AdSerializer(serializers.ModelSerializer):
         fields = ('id', 'created', 'title', 'description', 'category', 'price',
                   'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6',
                   'photo7', 'photo8')
-
