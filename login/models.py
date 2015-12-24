@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
     address = models.CharField(max_length=500)
     phone_number = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
-    photo = models.ImageField(upload_to=MEDIA_ROOT)
+    photo = models.ImageField(upload_to='avatars')
 
     write_only = ('password',)
     USERNAME_FIELD = 'username'
