@@ -94,7 +94,10 @@ WSGI_APPLICATION = 'accounts.wsgi.application'
 #     }
 # }
 
-DATABASES = {'default': dj_database_url.config()}
+DATABASES = {'default': dj_database_url.config(
+    default='postgres://pcevzthfyazzci:aTiDag8T48K5SMGkInKjPv1LiU@ec2-75-101-'
+            '143-150.compute-1.amazonaws.com:5432/dcqr8q0stmpvjp'
+)}
 DATABASES['default']['CONN_MAX_AGE'] = 500
 
 # Internationalization
@@ -114,18 +117,26 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+ADMIN_MEDIA_PREFIX = '/static/admin/'
+
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, 'static'),
+# )
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-MEDIA_ROOT = os.path.expanduser('~/Pictures')
+# MEDIA_ROOT = os.path.expanduser('~/Pictures')
+MEDIA_ROOT = '/media/'
+AWS_STORAGE_BUCKET_NAME = 'byteshaft-bidder'
+AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
+MEDIA_URL = 'https://{}/'.format(AWS_S3_CUSTOM_DOMAIN)
+
+MEDIA_LOCATION = MEDIA_URL+MEDIA_ROOT
 
 CORS_ORIGIN_ALLOW_ALL = True

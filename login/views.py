@@ -1,9 +1,17 @@
 from login.models import CustomUser, ProductAd
-from login.serializers import UserSerializer, AdSerializer
+from login.serializers import(
+    UserSerializer,
+    AdSerializer,
+    UserInterestsSerializer,
+    UserPushIdSerializer,
+)
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from login.permissions import IsOwner
+from login import helpers
 
 
 def _is_creator(username, request):
@@ -32,25 +40,15 @@ class UsersList(APIView):
 
 class UserDetail(APIView):
 
-    def get_user(self, username, request):
-        try:
-            return CustomUser.objects.get(username=username)
-        except CustomUser.DoesNotExist:
-            raise Http404
+    permission_classes = (IsOwner, )
 
     def get(self, request, username, format=None):
-        if not _is_creator(username, request):
-            return Response(data='Only the user can access their details',
-                            status=status.HTTP_403_FORBIDDEN)
-        user = self.get_user(username, request)
+        user = helpers.get_user_by_username(self, request, username)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, username, format=None):
-        if not _is_creator(username, request):
-            return Response(data='Only the user can change their details',
-                            status=status.HTTP_403_FORBIDDEN)
-        user = self.get_user(username, request)
+        user = helpers.get_user_by_username(self, request, username)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -58,32 +56,25 @@ class UserDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, username, format=None):
-        if not _is_creator(username, request):
-            return Response(data='Only the user can delete their self',
-                            status=status.HTTP_403_FORBIDDEN)
-        user = self.get_user(username, request)
+        user = helpers.get_user_by_username(self, request, username)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserExists(APIView):
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         user = request.data.get('username')
         if not user:
             return Response(data="'username' field not found in request",
                             status=status.HTTP_400_BAD_REQUEST)
         try:
             CustomUser.objects.get(username=user)
-            return Response(
-                data='Yes, user: {}, already exists'.format(user),
-                status=status.HTTP_200_OK
-            )
+            return Response(data='User: {}, already exists'.format(user),
+                            status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
-            return Response(
-                data='User with name {}, does not exist'.format(user),
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response(data='User: {}, does not exist'.format(user),
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class Push(APIView):
@@ -106,7 +97,7 @@ def _send_push_notification(message):
 class UserAdsView(APIView):
 
     def put(self, request, username, format=None):
-        if str(request.user) != username:
+        if request.user.username != username:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = AdSerializer(data=request.data)
@@ -117,7 +108,7 @@ class UserAdsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, username, format=None):
-        if str(request.user) != username:
+        if request.user.username != username:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         ads = ProductAd.objects.all()
@@ -127,14 +118,10 @@ class UserAdsView(APIView):
 
 class UserAdView(APIView):
 
-    def get_ad(self, pk):
-        try:
-            return ProductAd.objects.get(pk=pk)
-        except ProductAd.DoesNotExist:
-            raise Http404
+    permission_classes = (IsOwner, )
 
     def get(self, request, username, pk, format=None):
-        ad = self.get_ad(pk)
+        ad = helpers.get_ad_by_primary_key(self, request, pk)
         serializer = AdSerializer(ad)
         return Response(serializer.data)
 
@@ -163,3 +150,35 @@ def delete_ad(pk, delay):
     import threading
     t = threading.Timer(float(delay), really_delete, args=(pk,))
     t.start()
+
+
+class InterestsView(APIView):
+
+    permission_classes = (IsOwner, )
+
+    def get(self, request, username, format=None):
+        user = helpers.get_user_by_username(self, request, username)
+        interests = user.get('interests')
+        data = '{"interests": {}'.format(interests)
+        return Response(data, status=status.HTTP_200_OK)
+
+    def put(self, request, username, format=None):
+        user = helpers.get_user_by_username(self, request, username)
+        serializer = UserInterestsSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PushKeyView(APIView):
+
+    permission_classes = (IsOwner, )
+
+    def put(self, request, username, format=None):
+        user = helpers.get_user_by_username(self, request, username)
+        serializer = UserPushIdSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
