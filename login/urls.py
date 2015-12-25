@@ -8,7 +8,7 @@ urlpatterns = [
     # get list of users. Admin access required
     url(r'^api/users/list', views.UsersList.as_view()),
     # Get details for a specific user
-    url(r'^api/users/(?P<username>\w+)/', views.UserDetail.as_view()),
+    url(r'^api/users/(?P<username>\w+)/$', views.UserDetail.as_view()),
     # Get all ads by a user
     url(r'^api/users/(?P<username>\w+)/ads/post',
         views.UserPostAdView.as_view()),

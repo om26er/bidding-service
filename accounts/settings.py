@@ -101,8 +101,8 @@ WSGI_APPLICATION = 'accounts.wsgi.application'
 # }
 
 DATABASES = {'default': dj_database_url.config(
-    default='postgres://pcevzthfyazzci:aTiDag8T48K5SMGkInKjPv1LiU@ec2-75-101-'
-            '143-150.compute-1.amazonaws.com:5432/dcqr8q0stmpvjp'
+    default='postgres://jfzhpuqfwkmrbc:rojgzvxDo7SyHL4PArSMAawBgg@ec2-54-217-'
+            '231-152.eu-west-1.compute.amazonaws.com:5432/d7sejmic8l9nlf'
 )}
 DATABASES['default']['CONN_MAX_AGE'] = 500
 
