@@ -11,6 +11,12 @@ urlpatterns = [
     url(r'^users/(?P<username>\w+)/ads/$', views.UserAdsView.as_view()),
     url(r'^users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/$',
         views.UserAdView.as_view()),
+    # Get and put user's interests
+    url(r'^users/(?P<username>\w+)/interests/$',
+        views.InterestsView.as_view()),
+    # Put user's push notification ID
+    url(r'^users/(?P<username>\w+)/push_id/$',
+        views.PushKeyView.as_view()),
     # Check if a user exists
     url(r'^user/$', views.UserExists.as_view()),
     # Get ad by requested filter

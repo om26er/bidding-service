@@ -1,16 +1,13 @@
-import os
-
 from rest_framework import serializers
 
 from login.models import CustomUser, ProductAd
-from accounts.settings import MEDIA_ROOT, MEDIA_URL, MEDIA_LOCATION
+from accounts.settings import MEDIA_LOCATION
 
 
 def _save_avatar_image_if_attached(validated_data):
     photo_object = validated_data.get('photo')
     if photo_object:
         output_path = MEDIA_LOCATION + photo_object.name
-        print(output_path)
         destination = open(output_path, 'wb+')
         for chunk in photo_object.chunks():
             destination.write(chunk)
@@ -22,11 +19,14 @@ def _save_avatar_image_if_attached(validated_data):
 class UserSerializer(serializers.ModelSerializer):
 
     photo = serializers.ImageField(required=False)
+    email = serializers.EmailField(required=True)
+    interests = serializers.CharField(required=False)
+    push_notifications_key = serializers.CharField(required=False)
 
     class Meta:
         model = CustomUser
         fields = ('username', 'password', 'email', 'address', 'phone_number',
-                  'city', 'photo')
+                  'city', 'photo', 'interests', 'push_notifications_key')
 
     def create(self, validated_data):
         photo_path = _save_avatar_image_if_attached(validated_data)
@@ -41,6 +41,32 @@ class UserSerializer(serializers.ModelSerializer):
         user.photo = photo_path
         user.save()
         return user
+
+
+class UserInterestsSerializer(serializers.Serializer):
+
+    interests = serializers.CharField(required=True)
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        instance.interests = validated_data.get('interests')
+        instance.save()
+        return instance
+
+
+class UserPushIdSerializer(serializers.Serializer):
+
+    push_key = serializers.CharField(required=True)
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        instance.push_key = validated_data.get('push_key')
+        instance.save()
+        return instance
 
 
 class AdSerializer(serializers.ModelSerializer):
