@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from accounts.settings import MEDIA_ROOT, AUTH_USER_MODEL
+from accounts.settings import AUTH_USER_MODEL
+
+AD_IMAGES = 'attachments'
 
 
 class CustomUser(AbstractUser):
@@ -23,11 +25,11 @@ class ProductAd(models.Model):
     description = models.CharField(max_length=4000, blank=False)
     category = models.CharField(max_length=100, blank=False)
     price = models.CharField(max_length=10, blank=False)
-    photo1 = models.ImageField(upload_to=MEDIA_ROOT)
-    photo2 = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
-    photo3 = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
-    photo4 = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
-    photo5 = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
-    photo6 = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
-    photo7 = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
-    photo8 = models.ImageField(upload_to=MEDIA_ROOT, blank=True)
+    photo1 = models.ImageField(upload_to=AD_IMAGES)
+    photo2 = models.ImageField(upload_to=AD_IMAGES, blank=True)
+    photo3 = models.ImageField(upload_to=AD_IMAGES, blank=True)
+    photo4 = models.ImageField(upload_to=AD_IMAGES, blank=True)
+    photo5 = models.ImageField(upload_to=AD_IMAGES, blank=True)
+    photo6 = models.ImageField(upload_to=AD_IMAGES, blank=True)
+    photo7 = models.ImageField(upload_to=AD_IMAGES, blank=True)
+    photo8 = models.ImageField(upload_to=AD_IMAGES, blank=True)

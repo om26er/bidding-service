@@ -60,6 +60,12 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 5
+}
+
 ROOT_URLCONF = 'accounts.urls'
 
 AUTH_USER_MODEL = 'login.CustomUser'
