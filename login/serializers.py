@@ -12,13 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('username', 'password', 'email', 'address', 'phone_number',
+        fields = ('username', 'email', 'address', 'phone_number',
                   'city', 'photo', 'interests', 'push_notifications_key')
-
-    def create(self, validated_data):
-        data = CustomUser.objects.create(**validated_data)
-        data.set_password(validated_data.get('password'))
-        return data
 
 
 class UserInterestsSerializer(serializers.Serializer):

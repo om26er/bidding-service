@@ -22,6 +22,18 @@ class RegistrationView(CreateAPIView):
 
     serializer_class = UserSerializer
 
+    def post(self, request, *args, **kwargs):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # Update the password so that its hashed.
+            user = CustomUser.objects.get(username=request.POST['username'])
+            user.set_password(request.POST['password'])
+            user.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # return super().post(request, *args, **kwargs)
+
 
 class UsersList(ListAPIView):
 
