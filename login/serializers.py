@@ -1,19 +1,6 @@
 from rest_framework import serializers
 
 from login.models import CustomUser, ProductAd
-from accounts.settings import MEDIA_LOCATION
-
-
-def _save_avatar_image_if_attached(validated_data):
-    photo_object = validated_data.get('photo')
-    if photo_object:
-        output_path = MEDIA_LOCATION + photo_object.name
-        destination = open(output_path, 'wb+')
-        for chunk in photo_object.chunks():
-            destination.write(chunk)
-        destination.close()
-        return output_path
-    return ''
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,18 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
                   'city', 'photo', 'interests', 'push_notifications_key')
 
     def create(self, validated_data):
-        photo_path = _save_avatar_image_if_attached(validated_data)
-        user = CustomUser.objects.create_user(
-            username=validated_data.get('username'),
-            email=validated_data.get('email'),
-        )
-        user.set_password(validated_data.get('password'))
-        user.address = validated_data.get('address')
-        user.city = validated_data.get('city')
-        user.phone_number = validated_data.get('phone_number')
-        user.photo = photo_path
-        user.save()
-        return user
+        data = CustomUser.objects.create(**validated_data)
+        data.set_password(validated_data.get('password'))
+        return data
 
 
 class UserInterestsSerializer(serializers.Serializer):
