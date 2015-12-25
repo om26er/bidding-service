@@ -123,8 +123,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_URL = '/static/'
 
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
@@ -150,5 +150,8 @@ MEDIA_LOCATION = MEDIA_URL+MEDIA_ROOT
 #
 AWS_ACCESS_KEY_ID = 'AKIAITAA2ASISTWGYI3A'
 AWS_SECRET_ACCESS_KEY = '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'
+
+STATIC_URL = "https://{}/{}/".format(AWS_S3_CUSTOM_DOMAIN, 'staticfiles')
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 CORS_ORIGIN_ALLOW_ALL = True
