@@ -20,9 +20,6 @@ class UserInterestsSerializer(serializers.Serializer):
 
     interests = serializers.CharField(required=True)
 
-    def create(self, validated_data):
-        pass
-
     def update(self, instance, validated_data):
         instance.interests = validated_data.get('interests')
         instance.save()
@@ -32,9 +29,6 @@ class UserInterestsSerializer(serializers.Serializer):
 class UserPushIdSerializer(serializers.Serializer):
 
     push_key = serializers.CharField(required=True)
-
-    def create(self, validated_data):
-        pass
 
     def update(self, instance, validated_data):
         instance.push_key = validated_data.get('push_key')

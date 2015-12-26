@@ -126,11 +126,10 @@ class InterestsView(APIView):
 
     def get(self, request, username, format=None):
         user = helpers.get_user_by_username(self, request, username)
-        interests = user.get('interests')
-        data = '{"interests": {}'.format(interests)
+        data = {"interests": user.interests}
         return Response(data, status=status.HTTP_200_OK)
 
-    def put(self, request, username, format=None):
+    def post(self, request, username, format=None):
         user = helpers.get_user_by_username(self, request, username)
         serializer = UserInterestsSerializer(user, data=request.data)
         if serializer.is_valid():
@@ -143,7 +142,7 @@ class PushKeyView(APIView):
 
     permission_classes = (IsOwner, )
 
-    def put(self, request, username, format=None):
+    def post(self, request, username, format=None):
         user = helpers.get_user_by_username(self, request, username)
         serializer = UserPushIdSerializer(user, data=request.data)
         if serializer.is_valid():
