@@ -18,7 +18,7 @@ def get_user_by_username(api_view, request, username):
 def get_ad_by_primary_key(api_view, request, pk):
     try:
         obj = ProductAd.objects.get(pk=pk)
-        api_view.check_object_permissions(request, obj)
+        # api_view.check_object_permissions(request, obj)
         return obj
     except ProductAd.DoesNotExist:
         raise Http404

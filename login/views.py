@@ -1,38 +1,54 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import(
+    ListAPIView,
+    CreateAPIView,
+)
 from rest_framework import status
 from rest_framework import permissions
 
 from login.models import(
     CustomUser,
     ProductAd,
+    Comments,
 )
 from login.serializers import(
     UserSerializer,
     AdSerializer,
     UserInterestsSerializer,
     UserPushIdSerializer,
+    AdCommentSerializer,
+    AdCommentsSerializer
 )
 from login.permissions import IsOwner
 from login import helpers
 
 
+from rest_framework.authentication import SessionAuthentication
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
+
+
 class RegistrationView(CreateAPIView):
 
     serializer_class = UserSerializer
+    authentication_classes = (CsrfExemptSessionAuthentication, )
 
     def post(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             # Update the password so that its hashed.
-            user = CustomUser.objects.get(username=request.POST['username'])
-            user.set_password(request.POST['password'])
+            user = CustomUser.objects.get(
+                username=request.data.get('username'))
+            user.set_password(request.data.get('password'))
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # return super().post(request, *args, **kwargs)
 
 
 class UsersList(ListAPIView):
@@ -86,9 +102,37 @@ class UserPostAdView(APIView):
         serializer = AdSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=request.user)
-            helpers.delete_ad(serializer.data.get('id'), 60)
+            # helpers.delete_ad(serializer.data.get('id'), 60)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdCommentCreateView(CreateAPIView):
+
+    def post(self, request, *args, **kwargs):
+        ad = ProductAd.objects.get(id=kwargs.get('pk'))
+        serializer = AdCommentSerializer(ad, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdCommentsList(ListAPIView):
+
+    def get(self, request, **kwargs):
+        ad = ProductAd.objects.get(id=kwargs.get('pk'))
+        comments = Comments.objects.filter(ad=ad)
+        serializer = AdCommentsSerializer(comments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdCommentView(APIView):
+
+    def get(self, request, **kwargs):
+        comment = Comments.objects.get(id=kwargs.get('comment_id'))
+        serializer = AdCommentsSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserAdView(APIView):
