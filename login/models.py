@@ -4,6 +4,7 @@ from django.db import models
 from accounts.settings import AUTH_USER_MODEL
 
 AD_IMAGES = 'attachments'
+CATEGORY_IMAGES = 'categories'
 
 CHOICES = [(i, i) for i in range(1, 6)]
 
@@ -50,3 +51,9 @@ class Comments(models.Model):
     def __unicode__(self):
         return '{}: {}'.format(self.review, self.stars)
 
+
+class AdCategories(models.Model):
+
+    name = models.CharField(max_length=70, blank=False, unique=True)
+    photo = models.ImageField(upload_to=CATEGORY_IMAGES, blank=False)
+    id = models.AutoField(primary_key=True)
