@@ -2,6 +2,7 @@ import uuid
 import os
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib import admin
 from django.db import models
 
 from accounts.settings import AUTH_USER_MODEL
@@ -48,6 +49,11 @@ class ProductAd(models.Model):
         return '{} at {}'.format(self.title, self.price)
 
 
+class ProductAdInline(admin.TabularInline):
+
+    model = ProductAd
+
+
 class Comments(models.Model):
 
     ad = models.ForeignKey(ProductAd, related_name='comments')
@@ -60,6 +66,10 @@ class Comments(models.Model):
 
     def __unicode__(self):
         return '{}: {}'.format(self.review, self.stars)
+
+
+class AdCommentsInline(admin.TabularInline):
+    model = Comments
 
 
 class AdCategories(models.Model):
