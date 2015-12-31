@@ -3,8 +3,10 @@ from django.db import models
 
 from accounts.settings import AUTH_USER_MODEL
 
+from login.helpers import get_file_path
+
 AD_IMAGES = 'attachments'
-CATEGORY_IMAGES = 'categories'
+# CATEGORY_IMAGES = 'categories'
 
 CHOICES = [(i, i) for i in range(1, 6)]
 
@@ -55,5 +57,5 @@ class Comments(models.Model):
 class AdCategories(models.Model):
 
     name = models.CharField(max_length=70, blank=False, unique=True)
-    photo = models.ImageField(upload_to=CATEGORY_IMAGES, blank=False)
+    photo = models.ImageField(upload_to=get_file_path, blank=False)
     id = models.AutoField(primary_key=True)

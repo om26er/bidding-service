@@ -1,9 +1,18 @@
+import uuid
+import os
+
 from django.http import Http404
 
 from login.models import(
     CustomUser,
     ProductAd,
 )
+
+
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('images', filename)
 
 
 def get_user_by_username(api_view, request, username):
