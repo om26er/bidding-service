@@ -26,4 +26,17 @@ urlpatterns = [
     url(r'^api/users/(?P<username>\w+)/exists$', views.UserExists.as_view()),
     # Get ad by requested filter
     url(r'^api/ads/$', views.AdsFilterView.as_view()),
+
+    # Post ad comments
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/comments/post$',
+        views.AdCommentCreateView.as_view()),
+
+    # Get all comments of an ad
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/comments/$',
+        views.AdCommentsList.as_view()),
+
+    # get single comment of an ad
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/comments/'
+        r'(?P<comment_id>[0-9]+)$',
+        views.AdCommentView.as_view()),
 ]

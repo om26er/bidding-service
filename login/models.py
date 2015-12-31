@@ -5,6 +5,8 @@ from accounts.settings import AUTH_USER_MODEL
 
 AD_IMAGES = 'attachments'
 
+CHOICES = [(i, i) for i in range(1, 6)]
+
 
 class CustomUser(AbstractUser):
     address = models.CharField(max_length=500)
@@ -33,3 +35,18 @@ class ProductAd(models.Model):
     photo6 = models.ImageField(upload_to=AD_IMAGES, blank=True)
     photo7 = models.ImageField(upload_to=AD_IMAGES, blank=True)
     photo8 = models.ImageField(upload_to=AD_IMAGES, blank=True)
+
+
+class Comments(models.Model):
+
+    ad = models.ForeignKey(ProductAd, related_name='comments')
+    review = models.CharField(max_length=2000, blank=True)
+    stars = models.IntegerField(choices=CHOICES, blank=False, null=True)
+    created = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        ordering = ['created']
+
+    def __unicode__(self):
+        return '{}: {}'.format(self.review, self.stars)
+
