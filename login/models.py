@@ -16,6 +16,7 @@ def get_image_file_path(instance, filename):
 
 
 class CustomUser(AbstractUser):
+    created = models.DateTimeField(auto_now_add=True, null=True)
     address = models.CharField(max_length=500)
     phone_number = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
@@ -28,7 +29,7 @@ class CustomUser(AbstractUser):
 
 
 class ProductAd(models.Model):
-    owner = models.ForeignKey(AUTH_USER_MODEL, related_name='ad')
+    owner = models.ForeignKey(AUTH_USER_MODEL, blank=False, related_name='ad')
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=70, blank=False)
     description = models.CharField(max_length=4000, blank=False)
@@ -42,6 +43,9 @@ class ProductAd(models.Model):
     photo6 = models.ImageField(upload_to=get_image_file_path, blank=True)
     photo7 = models.ImageField(upload_to=get_image_file_path, blank=True)
     photo8 = models.ImageField(upload_to=get_image_file_path, blank=True)
+
+    def __unicode__(self):
+        return '{} at {}'.format(self.title, self.price)
 
 
 class Comments(models.Model):
