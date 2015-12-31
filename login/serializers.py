@@ -1,6 +1,11 @@
 from rest_framework import serializers
 
-from login.models import CustomUser, ProductAd, Comments
+from login.models import(
+    CustomUser,
+    ProductAd,
+    Comments,
+    AdCategories,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -79,3 +84,9 @@ class AdCommentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comments
+
+
+class AdCategoriesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AdCategories

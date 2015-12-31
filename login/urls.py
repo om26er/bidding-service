@@ -39,4 +39,11 @@ urlpatterns = [
     url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/comments/'
         r'(?P<comment_id>[0-9]+)$',
         views.AdCommentView.as_view()),
+
+    # Add and get categories for the site
+    url(r'^api/ads/categories/$', views.CategoriesView.as_view()),
+
+    # Delete categories by their primary key.
+    # Takes items as a list encapsulated into 'ids' parameter.
+    url(r'^api/ads/categories/delete$', views.DeleteCategoryView.as_view())
 ]
