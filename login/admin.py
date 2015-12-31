@@ -22,7 +22,7 @@ class AdCategoriesAdmin(admin.ModelAdmin):
     can_delete = False
     verbose_name_plural = 'Ad Categories'
     list_per_page = 15
-    list_display = ('name', 'created')
+    list_display = ('name', 'photo')
 
 
 admin.site.register(CustomUser, UserProfileAdmin)
