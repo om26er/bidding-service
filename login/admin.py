@@ -12,12 +12,19 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 class AdAdmin(admin.ModelAdmin):
-    can_delete = True
+    can_delete = False
     verbose_name_plural = 'product ad'
     list_per_page = 15
     list_display = ('title', 'created')
 
 
+class AdCategoriesAdmin(admin.ModelAdmin):
+    can_delete = False
+    verbose_name_plural = 'Ad Categories'
+    list_per_page = 15
+    list_display = ('name', 'created')
+
+
 admin.site.register(CustomUser, UserProfileAdmin)
 admin.site.register(ProductAd, AdAdmin)
-admin.site.register(AdCategories)
+admin.site.register(AdCategories, AdCategoriesAdmin)
