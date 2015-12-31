@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from login.models import CustomUser, ProductAd
+from login.models import CustomUser, ProductAd, AdCategories
 
 
 class UserProfileAdmin(admin.ModelAdmin):
@@ -9,7 +9,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_per_page = 15
     search_fields = ('username', 'email')
     list_display = ('username', 'email', 'created', 'is_active')
-    # raw_id_fields = ("username",)
 
 
 class AdAdmin(admin.ModelAdmin):
@@ -21,3 +20,4 @@ class AdAdmin(admin.ModelAdmin):
 
 admin.site.register(CustomUser, UserProfileAdmin)
 admin.site.register(ProductAd, AdAdmin)
+admin.site.register(AdCategories)
