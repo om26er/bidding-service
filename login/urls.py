@@ -13,7 +13,8 @@ urlpatterns = [
     url(r'^api/users/(?P<username>\w+)/ads/post$',
         views.UserPostAdView.as_view()),
     # Get ads by a user
-    url(r'^api/users/(?P<username>\w+)/ads/list$', views.UserAdsList.as_view()),
+    url(r'^api/users/(?P<username>\w+)/ads/list$',
+        views.UserAdsList.as_view()),
     # Get specific ad by a user
     url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/$',
         views.UserAdView.as_view()),

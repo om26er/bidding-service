@@ -68,3 +68,8 @@ def send_push_by_subscribed_categories(message_text, category):
     for user in users:
         push_ids.append(user.push_key)
     _send_push_notification(message_text, reg_ids=push_ids)
+
+
+def did_someone_bid(pk):
+    ad = ProductAd.objects.get(pk=pk)
+    # return len(ad.)
