@@ -3,8 +3,6 @@ from rest_framework.response import Response
 from rest_framework.generics import(
     ListAPIView,
     CreateAPIView,
-    ListCreateAPIView,
-    GenericAPIView,
 )
 from rest_framework import status
 from rest_framework import permissions
@@ -199,28 +197,10 @@ class PushKeyView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoriesView(ListCreateAPIView):
+class CategoriesView(ListAPIView):
 
     serializer_class = AdCategoriesSerializer
     queryset = AdCategories.objects.all()
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
-
-class DeleteCategoryView(GenericAPIView):
-
-    serializer_class = AdCategoriesSerializer
-
-    def delete(self, request, **kwargs):
-        items_to_delete = request.data.get('ids')
-        categories = AdCategories.objects.filter(id__in=items_to_delete)
-        if len(categories) == 0:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        for category in categories:
-            category.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)

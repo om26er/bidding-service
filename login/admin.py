@@ -12,17 +12,15 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'created', 'is_active')
 
     exclude = ('user_permissions', 'groups')
-
-
     inlines = [ProductAdInline]
 
 
 class AdAdmin(admin.ModelAdmin):
-
     can_delete = False
     verbose_name_plural = 'product ad'
     list_per_page = 15
     list_display = ('title', 'created')
+    search_fields = ('title', )
 
     inlines = [AdCommentsInline]
 
@@ -36,5 +34,5 @@ class AdCategoriesAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CustomUser, UserProfileAdmin)
-# admin.site.register(ProductAd, AdAdmin)
+admin.site.register(ProductAd, AdAdmin)
 admin.site.register(AdCategories, AdCategoriesAdmin)

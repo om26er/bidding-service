@@ -13,7 +13,8 @@ urlpatterns = [
     url(r'^api/users/(?P<username>\w+)/ads/post$',
         views.UserPostAdView.as_view()),
     # Get ads by a user
-    url(r'^api/users/(?P<username>\w+)/ads/list$', views.UserAdsList.as_view()),
+    url(r'^api/users/(?P<username>\w+)/ads/list$',
+        views.UserAdsList.as_view()),
     # Get specific ad by a user
     url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/$',
         views.UserAdView.as_view()),
@@ -40,10 +41,6 @@ urlpatterns = [
         r'(?P<comment_id>[0-9]+)$',
         views.AdCommentView.as_view()),
 
-    # Add and get categories for the site
-    url(r'^api/ads/categories/$', views.CategoriesView.as_view()),
-
-    # Delete categories by their primary key.
-    # Takes items as a list encapsulated into 'ids' parameter.
-    url(r'^api/ads/categories/delete$', views.DeleteCategoryView.as_view())
+    # Get categories for the site
+    url(r'^api/ads/categories$', views.CategoriesView.as_view()),
 ]
