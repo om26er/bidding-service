@@ -45,6 +45,9 @@ class ProductAd(models.Model):
     photo7 = models.ImageField(upload_to=get_image_file_path, blank=True)
     photo8 = models.ImageField(upload_to=get_image_file_path, blank=True)
 
+    class Meta:
+        ordering = ('created', )
+
     def __unicode__(self):
         return '{} at {}'.format(self.title, self.price)
 
