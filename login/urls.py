@@ -41,6 +41,6 @@ urlpatterns = [
         r'(?P<comment_id>[0-9]+)$',
         views.AdCommentView.as_view()),
 
-    # Add and get categories for the site
-    url(r'^api/ads/categories/$', views.CategoriesView.as_view()),
+    # Get categories for the site
+    url(r'^api/ads/categories$', views.CategoriesView.as_view()),
 ]
