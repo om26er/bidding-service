@@ -43,8 +43,4 @@ urlpatterns = [
 
     # Add and get categories for the site
     url(r'^api/ads/categories/$', views.CategoriesView.as_view()),
-
-    # Delete categories by their primary key.
-    # Takes items as a list encapsulated into 'ids' parameter.
-    url(r'^api/ads/categories/delete$', views.DeleteCategoryView.as_view())
 ]
