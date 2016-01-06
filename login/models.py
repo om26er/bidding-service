@@ -12,7 +12,8 @@ CHOICES = [(i, i) for i in range(1, 6)]
 
 def get_image_file_path(instance, filename):
     ext = filename.split('.')[-1]
-    filename = '{}.{}'.format(uuid.uuid4(), ext)
+    name = str(uuid.uuid4()).replace('-', '_')
+    filename = '{}.{}'.format(name, ext)
     return os.path.join('images', filename)
 
 
@@ -46,7 +47,7 @@ class ProductAd(models.Model):
     photo8 = models.ImageField(upload_to=get_image_file_path, blank=True)
 
     class Meta:
-        ordering = ('created', )
+        ordering = ('-created', )
 
     def __unicode__(self):
         return '{} at {}'.format(self.title, self.price)
