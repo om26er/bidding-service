@@ -14,6 +14,7 @@ def get_image_file_path(instance, filename):
     ext = filename.split('.')[-1]
     name = str(uuid.uuid4()).replace('-', '_')
     filename = '{}.{}'.format(name, ext)
+    print(os.path.join('images', filename))
     return os.path.join('images', filename)
 
 

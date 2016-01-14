@@ -43,7 +43,8 @@ class UserPushIdSerializer(serializers.Serializer):
 
 class AdSerializer(serializers.ModelSerializer):
 
-    comments = serializers.StringRelatedField(many=True)
+    comments = serializers.StringRelatedField(many=True, required=False)
+    currency = serializers.CharField(required=True)
 
     photo2 = serializers.ImageField(required=False)
     photo3 = serializers.ImageField(required=False)
