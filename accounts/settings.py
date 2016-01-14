@@ -15,6 +15,9 @@ import os
 
 import dj_database_url
 
+HOST_IP = '46.101.75.194'
+LOCAL_HOST = 'localhost'
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -60,7 +63,7 @@ MIDDLEWARE_CLASSES = (
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.LimitOffsetPagination',
+        'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5
 }
 
@@ -92,11 +95,10 @@ WSGI_APPLICATION = 'accounts.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 def get_host():
-    import os
     if os.path.exists(os.path.expanduser('~/localdb')):
-        return 'localhost'
+        return LOCAL_HOST
     else:
-        return '46.101.75.194'
+        return HOST_IP
 
 DATABASES = {
     'default': {
@@ -131,32 +133,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
-
-# ADMIN_MEDIA_PREFIX = '/static/admin/'
-
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, 'static'),
-# )
-
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-
-# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
-# MEDIA_ROOT = os.path.expanduser('~/Pictures')
-# MEDIAFILES_LOCATION = 'media'
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
-# MEDIA_ROOT = '/media/'
-
-# AWS_STORAGE_BUCKET_NAME = 'byteshaft-bidder'
-# AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
-# MEDIA_URL = 'https://{}/{}/'.format(AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
-# DEFAULT_FILE_STORAGE = 'login.custom_storages.MediaStorage'
-
-# MEDIA_LOCATION = MEDIA_URL+MEDIA_ROOT
-# #
-# AWS_ACCESS_KEY_ID = 'AKIAITAA2ASISTWGYI3A'
-# AWS_SECRET_ACCESS_KEY = '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'
-#
-# STATIC_URL = "https://{}/{}/".format(AWS_S3_CUSTOM_DOMAIN, 'staticfiles')
-# STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+MEDIA_URL = '/media/'

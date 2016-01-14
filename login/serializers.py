@@ -43,7 +43,8 @@ class UserPushIdSerializer(serializers.Serializer):
 
 class AdSerializer(serializers.ModelSerializer):
 
-    comments = serializers.StringRelatedField(many=True)
+    comments = serializers.StringRelatedField(many=True, required=False)
+    currency = serializers.CharField(required=True)
 
     photo2 = serializers.ImageField(required=False)
     photo3 = serializers.ImageField(required=False)
@@ -57,7 +58,7 @@ class AdSerializer(serializers.ModelSerializer):
         model = ProductAd
         fields = ('id', 'created', 'title', 'description', 'category', 'price',
                   'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6',
-                  'photo7', 'photo8', 'comments')
+                  'photo7', 'photo8', 'comments', 'currency')
 
 
 class AdCommentSerializer(serializers.Serializer):

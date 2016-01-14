@@ -1,3 +1,4 @@
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import(
@@ -163,6 +164,9 @@ class AdsFilterView(ListAPIView):
     def get_queryset(self):
         # Convert the request from QueryDict to a dictionary
         query = self.request.GET.dict()
+        page = query.get('page', None)
+        if page:
+            query.pop('page')
         return ProductAd.objects.filter(**query)
 
 
