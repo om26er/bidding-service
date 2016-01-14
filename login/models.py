@@ -74,6 +74,7 @@ class Comments(models.Model):
 
 class AdCommentsInline(admin.TabularInline):
     model = Comments
+    min_num = 0
 
 
 class AdCategories(models.Model):

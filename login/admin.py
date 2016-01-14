@@ -1,7 +1,12 @@
 from django.contrib import admin
 
-from login.models import CustomUser, ProductAd, AdCategories, Comments, \
-    AdCommentsInline, ProductAdInline
+from login.models import(
+    CustomUser,
+    ProductAd,
+    AdCategories,
+    AdCommentsInline,
+    ProductAdInline
+)
 
 
 class UserProfileAdmin(admin.ModelAdmin):
