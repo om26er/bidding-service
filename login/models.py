@@ -37,6 +37,7 @@ class ProductAd(models.Model):
     description = models.CharField(max_length=4000, blank=False)
     category = models.CharField(max_length=100, blank=False)
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
+    currency = models.CharField(max_length=3, null=True, blank=False)
     photo1 = models.ImageField(upload_to=get_image_file_path)
     photo2 = models.ImageField(upload_to=get_image_file_path, blank=True)
     photo3 = models.ImageField(upload_to=get_image_file_path, blank=True)

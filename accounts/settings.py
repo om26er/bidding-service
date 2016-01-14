@@ -15,6 +15,9 @@ import os
 
 import dj_database_url
 
+HOST_IP = '46.101.75.194'
+LOCAL_HOST = 'localhost'
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -92,11 +95,10 @@ WSGI_APPLICATION = 'accounts.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 def get_host():
-    import os
     if os.path.exists(os.path.expanduser('~/localdb')):
-        return 'localhost'
+        return LOCAL_HOST
     else:
-        return '46.101.75.194'
+        return HOST_IP
 
 DATABASES = {
     'default': {

@@ -57,7 +57,7 @@ class AdSerializer(serializers.ModelSerializer):
         model = ProductAd
         fields = ('id', 'created', 'title', 'description', 'category', 'price',
                   'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6',
-                  'photo7', 'photo8', 'comments')
+                  'photo7', 'photo8', 'comments', 'currency')
 
 
 class AdCommentSerializer(serializers.Serializer):
