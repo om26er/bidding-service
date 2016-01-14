@@ -44,13 +44,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders',
     'login',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -93,18 +91,24 @@ WSGI_APPLICATION = 'accounts.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+def get_host():
+    import os
+    if os.path.exists(os.path.expanduser('~/localdb')):
+        return 'localhost'
+    else:
+        return '46.101.75.194'
 
-DATABASES = {'default': dj_database_url.config(
-    default='postgres://jfzhpuqfwkmrbc:rojgzvxDo7SyHL4PArSMAawBgg@ec2-54-217-'
-            '231-152.eu-west-1.compute.amazonaws.com:5432/d7sejmic8l9nlf'
-)}
-DATABASES['default']['CONN_MAX_AGE'] = 500
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bidding_service',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': get_host(),
+        'PORT': '5432',
+        'CONN_MAX_AGE': 100,
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -123,10 +127,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_URL = '/static/'
 
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+
+# ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # STATICFILES_DIRS = (
 #     os.path.join(BASE_DIR, 'static'),
@@ -138,20 +144,19 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # MEDIA_ROOT = os.path.expanduser('~/Pictures')
-MEDIAFILES_LOCATION = 'media'
-MEDIA_ROOT = '/media/'
+# MEDIAFILES_LOCATION = 'media'
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+# MEDIA_ROOT = '/media/'
 
-AWS_STORAGE_BUCKET_NAME = 'byteshaft-bidder'
-AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
-MEDIA_URL = 'https://{}/{}/'.format(AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
-DEFAULT_FILE_STORAGE = 'login.custom_storages.MediaStorage'
+# AWS_STORAGE_BUCKET_NAME = 'byteshaft-bidder'
+# AWS_S3_CUSTOM_DOMAIN = '{}.s3.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME)
+# MEDIA_URL = 'https://{}/{}/'.format(AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
+# DEFAULT_FILE_STORAGE = 'login.custom_storages.MediaStorage'
 
-MEDIA_LOCATION = MEDIA_URL+MEDIA_ROOT
+# MEDIA_LOCATION = MEDIA_URL+MEDIA_ROOT
+# #
+# AWS_ACCESS_KEY_ID = 'AKIAITAA2ASISTWGYI3A'
+# AWS_SECRET_ACCESS_KEY = '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'
 #
-AWS_ACCESS_KEY_ID = 'AKIAITAA2ASISTWGYI3A'
-AWS_SECRET_ACCESS_KEY = '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'
-
-STATIC_URL = "https://{}/{}/".format(AWS_S3_CUSTOM_DOMAIN, 'staticfiles')
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-CORS_ORIGIN_ALLOW_ALL = True
+# STATIC_URL = "https://{}/{}/".format(AWS_S3_CUSTOM_DOMAIN, 'staticfiles')
+# STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
