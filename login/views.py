@@ -157,12 +157,6 @@ class UserAdsList(ListAPIView):
         return ProductAd.objects.filter(owner=self.request.user)
 
 
-# class LargeResultsSetPagination(PageNumberPagination):
-#     page_size = 1000
-#     page_size_query_param = 'page_size'
-#     max_page_size = 10000
-
-
 class AdsFilterView(ListAPIView):
 
     serializer_class = AdSerializer
@@ -170,10 +164,10 @@ class AdsFilterView(ListAPIView):
     def get_queryset(self):
         # Convert the request from QueryDict to a dictionary
         query = self.request.GET.dict()
-        query.pop('page')
+        page = query.get('page', None)
+        if page:
+            query.pop('page')
         return ProductAd.objects.filter(**query)
-
-
 
 
 class InterestsView(APIView):
