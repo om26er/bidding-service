@@ -64,7 +64,7 @@ class Comments(models.Model):
 
     ad = models.ForeignKey(ProductAd, related_name='comments')
     review = models.CharField(max_length=2000, blank=True)
-    stars = models.IntegerField(choices=CHOICES, blank=False, null=True)
+    stars = models.IntegerField(choices=CHOICES, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:
