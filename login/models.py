@@ -14,7 +14,6 @@ def get_image_file_path(instance, filename):
     ext = filename.split('.')[-1]
     name = str(uuid.uuid4()).replace('-', '_')
     filename = '{}.{}'.format(name, ext)
-    print(os.path.join('images', filename))
     return os.path.join('images', filename)
 
 
@@ -51,8 +50,20 @@ class ProductAd(models.Model):
     class Meta:
         ordering = ('-created', )
 
-    def __unicode__(self):
-        return '{} at {}'.format(self.title, self.price)
+    def __str__(self):
+        return '{} @ {}'.format(self.title, self.price)
+
+
+class Bids(models.Model):
+    ad = models.ForeignKey(ProductAd, on_delete=models.CASCADE,
+                           related_name='bids')
+    bid_time = models.DateTimeField(auto_now_add=True)
+    bidder = models.ForeignKey(AUTH_USER_MODEL, blank=False,
+                               related_name='bidder')
+    bid = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
+
+    def __str__(self):
+        return '{} @ {}'.format(self.bidder, self.bid)
 
 
 class ProductAdInline(admin.TabularInline):
@@ -60,22 +71,22 @@ class ProductAdInline(admin.TabularInline):
     model = ProductAd
 
 
-class Comments(models.Model):
-
-    ad = models.ForeignKey(ProductAd, related_name='comments')
-    review = models.CharField(max_length=2000, blank=True)
-    stars = models.IntegerField(choices=CHOICES, blank=False, null=True)
-    created = models.DateTimeField(auto_now_add=True, null=True)
-
-    class Meta:
-        ordering = ['created']
-
-    def __unicode__(self):
-        return '{}: {}'.format(self.review, self.stars)
-
-
-class AdCommentsInline(admin.TabularInline):
-    model = Comments
+# class Comments(models.Model):
+#
+#     ad = models.ForeignKey(ProductAd, related_name='comments')
+#     review = models.CharField(max_length=2000, blank=True)
+#     stars = models.IntegerField(choices=CHOICES, blank=True, null=True)
+#     created = models.DateTimeField(auto_now_add=True, null=True)
+#
+#     class Meta:
+#         ordering = ['created']
+#
+#     def __unicode__(self):
+#         return '{}: {}'.format(self.review, self.stars)
+#
+#
+# class AdCommentsInline(admin.TabularInline):
+#     model = Comments
 
 
 class AdCategories(models.Model):

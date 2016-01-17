@@ -4,7 +4,6 @@ from login.models import(
     CustomUser,
     ProductAd,
     AdCategories,
-    AdCommentsInline,
     ProductAdInline
 )
 
@@ -27,7 +26,7 @@ class AdAdmin(admin.ModelAdmin):
     list_display = ('title', 'created')
     search_fields = ('title', )
 
-    inlines = [AdCommentsInline]
+    # inlines = [AdCommentsInline]
 
 
 class AdCategoriesAdmin(admin.ModelAdmin):
