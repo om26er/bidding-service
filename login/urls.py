@@ -28,18 +28,17 @@ urlpatterns = [
     # Get ad by requested filter
     url(r'^api/ads/$', views.AdsFilterView.as_view()),
 
-    # Post ad comments
-    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/comments/post$',
-        views.AdCommentCreateView.as_view()),
+    # Place a bid on an Ad
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/bids/post',
+        views.CreateBidView.as_view()),
 
-    # Get all comments of an ad
-    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/comments/$',
-        views.AdCommentsList.as_view()),
+    # Change/Delete/Retrieve a bid
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<ad_id>[0-9]+)/bids/'
+        r'(?P<pk>[0-9]+)',
+        views.GetUpdateDeleteBidView.as_view()),
 
-    # get single comment of an ad
-    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/comments/'
-        r'(?P<comment_id>[0-9]+)$',
-        views.AdCommentView.as_view()),
+    # # Get all the ads a user bid on
+    # url(r'^api/users/(?P<username>\w+)/bids', views.UserBidsView.as_view()),
 
     # Get categories for the site
     url(r'^api/ads/categories$', views.CategoriesView.as_view()),

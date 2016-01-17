@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.generics import(
     ListAPIView,
     CreateAPIView,
+    RetrieveUpdateDestroyAPIView,
 )
 from rest_framework import status
 from rest_framework import permissions
@@ -11,7 +12,7 @@ from rest_framework import permissions
 from login.models import(
     CustomUser,
     ProductAd,
-    Comments,
+    Bids,
     AdCategories,
 )
 from login.serializers import(
@@ -19,8 +20,7 @@ from login.serializers import(
     AdSerializer,
     UserInterestsSerializer,
     UserPushIdSerializer,
-    AdCommentSerializer,
-    AdCommentsSerializer,
+    AdBidSerializer,
     AdCategoriesSerializer,
 )
 from login.permissions import IsOwner
@@ -110,31 +110,97 @@ class UserPostAdView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdCommentCreateView(CreateAPIView):
+class CreateBidView(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
-        ad = ProductAd.objects.get(id=kwargs.get('pk'))
-        serializer = AdCommentSerializer(ad, data=request.data)
+        username = str(self.request.user)
+        user_id = helpers.get_user_id_by_name(username)
+        ad_id = kwargs.get('pk')
+        request.data.update({'ad': ad_id})
+        request.data.update({'bidder': user_id})
+        # Allow a user to bid only once per ad
+        if helpers.did_user_already_bid(ad_id, user_id):
+            return Response({'result': 'Only one bid per user per ad allowed'},
+                            status=status.HTTP_409_CONFLICT)
+
+        serializer = AdBidSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdCommentsList(ListAPIView):
+class GetUpdateDeleteBidView(RetrieveUpdateDestroyAPIView):
 
-    def get(self, request, **kwargs):
-        ad = ProductAd.objects.get(id=kwargs.get('pk'))
-        comments = Comments.objects.filter(ad=ad)
-        serializer = AdCommentsSerializer(comments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer_class = AdBidSerializer
+
+    def get_queryset_safe(self):
+        from django.core.exceptions import ObjectDoesNotExist
+        try:
+            return self.get_queryset()
+        except ObjectDoesNotExist:
+            return None
+
+    def get_queryset(self):
+        return Bids.objects.get(id=self.kwargs.get('pk'))
+
+    def delete(self, request, *args, **kwargs):
+        queryset = self.get_queryset_safe()
+        if queryset:
+            queryset.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response({'result': 'Comment does not exist'},
+                        status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset_safe()
+        if queryset:
+            serializer = self.get_serializer(instance=queryset)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(data={'result': 'Comment does not exist'},
+                        status=status.HTTP_204_NO_CONTENT)
+
+    def put(self, request, *args, **kwargs):
+        queryset = self.get_queryset_safe()
+        if queryset:
+            username = str(self.request.user)
+            user_id = helpers.get_user_id_by_name(username)
+            ad_id = kwargs.get('ad_id')
+            request.data.update({'ad': ad_id})
+            request.data.update({'bidder': user_id})
+            serializer = self.get_serializer(instance=queryset,
+                                             data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'result': 'Comment does not exist'},
+                        status=status.HTTP_204_NO_CONTENT)
 
 
-class AdCommentView(APIView):
+class UserBidsView(ListAPIView):
 
-    def get(self, request, **kwargs):
-        comment = Comments.objects.get(id=kwargs.get('comment_id'))
-        serializer = AdCommentsSerializer(comment)
+    def get_queryset_safe(self):
+        from django.core.exceptions import ObjectDoesNotExist
+        try:
+            return self.get_queryset()
+        except ObjectDoesNotExist:
+            return None
+
+    def get_queryset(self):
+        username = str(self.request.user)
+        user_id = helpers.get_user_id_by_name(username)
+        user_bids = Bids.objects.filter(bidder_id=user_id)
+        bid_ads = [bid.ad_id for bid in user_bids]
+        return ProductAd.objects.filter(id__in=bid_ads)
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset_safe()
+        serializer = AdSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

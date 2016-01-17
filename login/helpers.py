@@ -3,6 +3,7 @@ from django.http import Http404
 from login.models import(
     CustomUser,
     ProductAd,
+    Bids,
 )
 
 
@@ -73,3 +74,15 @@ def send_push_by_subscribed_categories(message_text, category):
 def did_someone_bid(pk):
     ad = ProductAd.objects.get(pk=pk)
     # return len(ad.)
+
+
+def get_user_id_by_name(username):
+    try:
+        return CustomUser.objects.get(username=username).id
+    except CustomUser.DoesNotExist:
+        raise Http404
+
+
+def did_user_already_bid(ad_id, bidder_id):
+    bids = Bids.objects.filter(ad_id=ad_id, bidder_id=bidder_id)
+    return len(bids) > 0
