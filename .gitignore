@@ -2,3 +2,4 @@ venv
 *.pyc
 staticfiles
 accounts/__pycache__
+.idea/*
