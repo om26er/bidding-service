@@ -65,28 +65,13 @@ class Bids(models.Model):
     def __str__(self):
         return '{} @ {}'.format(self.bidder, self.bid)
 
+    def bidder_name(self):
+        return self.bidder.username
+
 
 class ProductAdInline(admin.TabularInline):
 
     model = ProductAd
-
-
-# class Comments(models.Model):
-#
-#     ad = models.ForeignKey(ProductAd, related_name='comments')
-#     review = models.CharField(max_length=2000, blank=True)
-#     stars = models.IntegerField(choices=CHOICES, blank=True, null=True)
-#     created = models.DateTimeField(auto_now_add=True, null=True)
-#
-#     class Meta:
-#         ordering = ['created']
-#
-#     def __unicode__(self):
-#         return '{}: {}'.format(self.review, self.stars)
-#
-#
-# class AdCommentsInline(admin.TabularInline):
-#     model = Comments
 
 
 class AdCategories(models.Model):
