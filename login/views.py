@@ -22,7 +22,7 @@ from login.serializers import(
     UserPushIdSerializer,
     AdBidSerializer,
     AdCategoriesSerializer,
-)
+    BidsSerializer)
 from login.permissions import IsOwner
 from login import helpers
 
@@ -128,6 +128,14 @@ class CreateBidView(CreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdBidsView(ListAPIView):
+
+    serializer_class = BidsSerializer
+
+    def get_queryset(self):
+        return Bids.objects.filter(ad_id=self.kwargs.get('pk'))
 
 
 class GetUpdateDeleteBidView(RetrieveUpdateDestroyAPIView):
