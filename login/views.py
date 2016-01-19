@@ -1,4 +1,3 @@
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import(
@@ -22,7 +21,8 @@ from login.serializers import(
     UserPushIdSerializer,
     AdBidSerializer,
     AdCategoriesSerializer,
-    BidsSerializer)
+    BidsSerializer
+)
 from login.permissions import IsOwner
 from login import helpers
 
@@ -112,6 +112,8 @@ class UserPostAdView(APIView):
 
 class CreateBidView(CreateAPIView):
 
+    permission_classes = (permissions.IsAuthenticated, )
+
     def post(self, request, *args, **kwargs):
         username = str(self.request.user)
         user_id = helpers.get_user_id_by_name(username)
@@ -192,24 +194,12 @@ class GetUpdateDeleteBidView(RetrieveUpdateDestroyAPIView):
 
 class UserBidsView(ListAPIView):
 
-    def get_queryset_safe(self):
-        from django.core.exceptions import ObjectDoesNotExist
-        try:
-            return self.get_queryset()
-        except ObjectDoesNotExist:
-            return None
+    serializer_class = AdSerializer
+    permission_classes = (IsOwner, )
 
     def get_queryset(self):
-        username = str(self.request.user)
-        user_id = helpers.get_user_id_by_name(username)
-        user_bids = Bids.objects.filter(bidder_id=user_id)
-        bid_ads = [bid.ad_id for bid in user_bids]
-        return ProductAd.objects.filter(id__in=bid_ads)
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset_safe()
-        serializer = AdSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        bids = Bids.objects.filter(bidder_id=self.request.user.id)
+        return [bid.ad for bid in bids]
 
 
 class UserAdView(APIView):

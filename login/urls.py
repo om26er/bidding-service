@@ -9,10 +9,10 @@ urlpatterns = [
     url(r'^api/users/list$', views.UsersList.as_view()),
     # Get details for a specific user
     url(r'^api/users/(?P<username>\w+)/$', views.UserDetail.as_view()),
-    # Get all ads by a user
+    # Post an ad
     url(r'^api/users/(?P<username>\w+)/ads/post$',
         views.UserPostAdView.as_view()),
-    # Get ads by a user
+    # Get all ads by a user
     url(r'^api/users/(?P<username>\w+)/ads/list$',
         views.UserAdsList.as_view()),
     # Get specific ad by a user
@@ -41,8 +41,8 @@ urlpatterns = [
         r'(?P<pk>[0-9]+)',
         views.GetUpdateDeleteBidView.as_view()),
 
-    # # Get all the ads a user bid on
-    # url(r'^api/users/(?P<username>\w+)/bids', views.UserBidsView.as_view()),
+    # Get all the ads a user bid on
+    url(r'^api/users/(?P<username>\w+)/bids', views.UserBidsView.as_view()),
 
     # Get categories for the site
     url(r'^api/ads/categories$', views.CategoriesView.as_view()),
