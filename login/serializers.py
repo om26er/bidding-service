@@ -89,32 +89,7 @@ class BidsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bids
-
-
-# class AdCommentSerializer(serializers.Serializer):
-#
-#     review = serializers.CharField(required=True)
-#     stars = serializers.IntegerField(required=True)
-#
-#     def create(self, validated_data):
-#         pass
-#
-#     def update(self, instance, validated_data):
-#         review_text = validated_data.get('review', None)
-#         stars = validated_data.get('stars', None)
-#         if review_text and stars:
-#                 comment = Comments(ad=instance,
-#                                    review=validated_data.get('review'),
-#                                    stars=validated_data.get('stars'))
-#                 comment.save()
-#                 return comment
-#         return instance
-
-
-# class AdCommentsSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = Comments
+        fields = ('ad', 'bid', 'bid_time', 'bidder', 'id', 'bidder_name')
 
 
 class AdCategoriesSerializer(serializers.ModelSerializer):
