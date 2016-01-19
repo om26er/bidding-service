@@ -85,6 +85,12 @@ class AdBidSerializer(serializers.ModelSerializer):
         return instance
 
 
+class BidsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Bids
+
+
 # class AdCommentSerializer(serializers.Serializer):
 #
 #     review = serializers.CharField(required=True)

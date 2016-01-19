@@ -32,6 +32,10 @@ urlpatterns = [
     url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/bids/post',
         views.CreateBidView.as_view()),
 
+    # Get all bids on an Ad
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/bids/',
+        views.AdBidsView.as_view()),
+
     # Change/Delete/Retrieve a bid
     url(r'^api/users/(?P<username>\w+)/ads/(?P<ad_id>[0-9]+)/bids/'
         r'(?P<pk>[0-9]+)',
