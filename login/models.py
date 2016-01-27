@@ -79,3 +79,14 @@ class AdCategories(models.Model):
     name = models.CharField(max_length=70, blank=False, unique=True)
     photo = models.ImageField(upload_to=get_image_file_path, blank=False)
     id = models.AutoField(primary_key=True)
+
+
+class Messages(models.Model):
+    ad = models.ForeignKey(ProductAd, on_delete=models.CASCADE,
+                           related_name='chat')
+    message_time = models.DateTimeField(auto_now_add=True)
+    direction = models.CharField(max_length=8, blank=False)
+    sender_name = models.CharField(max_length=70, blank=False)
+    message = models.CharField(max_length=2000, blank=False)
+    # To keep a track of to whom this message thread is associated to
+    bidder_name = models.CharField(max_length=70, blank=False)

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.generics import(
     ListAPIView,
     CreateAPIView,
+    ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework import status
@@ -13,6 +14,7 @@ from login.models import(
     ProductAd,
     Bids,
     AdCategories,
+    Messages,
 )
 from login.serializers import(
     UserSerializer,
@@ -21,7 +23,8 @@ from login.serializers import(
     UserPushIdSerializer,
     AdBidSerializer,
     AdCategoriesSerializer,
-    BidsSerializer
+    BidsSerializer,
+    MessagesSerializer
 )
 from login.permissions import IsOwner
 from login import helpers
@@ -272,3 +275,31 @@ class CategoriesView(ListAPIView):
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+
+class MessagesView(ListCreateAPIView):
+
+    serializer_class = MessagesSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get_queryset(self):
+        return Messages.objects.filter(ad_id=self.kwargs.get('pk'))
+
+    def _get_direction(self, sender_name, ad_owner_name):
+        if sender_name == ad_owner_name:
+            return 'outgoing'
+        return 'incoming'
+
+    def post(self, request, **kwargs):
+        sender_name = request.user.username
+        direction = self._get_direction(sender_name,
+                                        self.kwargs.get('username'))
+        real_data = self.request.data
+        real_data.update({'ad': self.kwargs.get('pk')})
+        real_data.update({'direction': direction})
+        real_data.update({'sender_name': sender_name})
+        serializer = self.get_serializer(data=real_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
