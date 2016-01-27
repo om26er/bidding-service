@@ -6,7 +6,7 @@ from login.models import(
     # Comments,
     Bids,
     AdCategories,
-)
+    Messages)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -96,3 +96,9 @@ class AdCategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AdCategories
+
+
+class MessagesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Messages
