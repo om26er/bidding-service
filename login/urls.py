@@ -38,7 +38,7 @@ urlpatterns = [
 
     # Change/Delete/Retrieve a bid
     url(r'^api/users/(?P<username>\w+)/ads/(?P<ad_id>[0-9]+)/bids/$'
-        r'(?P<pk>[0-9]+)',
+        r'(?P<pk>[0-9]+)$',
         views.GetUpdateDeleteBidView.as_view()),
 
     # Send/Get message(s)
