@@ -29,16 +29,16 @@ urlpatterns = [
     url(r'^api/ads/$', views.AdsFilterView.as_view()),
 
     # Place a bid on an Ad
-    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/bids/post',
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/bids/post$',
         views.CreateBidView.as_view()),
 
     # Get all bids on an Ad
-    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/bids/',
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/bids/$',
         views.AdBidsView.as_view()),
 
     # Change/Delete/Retrieve a bid
     url(r'^api/users/(?P<username>\w+)/ads/(?P<ad_id>[0-9]+)/bids/'
-        r'(?P<pk>[0-9]+)',
+        r'(?P<pk>[0-9]+)$',
         views.GetUpdateDeleteBidView.as_view()),
 
     # Send/Get message(s)
@@ -46,7 +46,7 @@ urlpatterns = [
         views.MessagesView.as_view()),
 
     # Get all the ads a user bid on
-    url(r'^api/users/(?P<username>\w+)/bids', views.UserBidsView.as_view()),
+    url(r'^api/users/(?P<username>\w+)/bids$', views.UserBidsView.as_view()),
 
     # Get categories for the site
     url(r'^api/ads/categories$', views.CategoriesView.as_view()),
