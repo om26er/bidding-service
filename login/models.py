@@ -18,12 +18,16 @@ def get_image_file_path(instance, filename):
 
 
 class CustomUser(AbstractUser):
+    """Structure for a user account database table."""
     created = models.DateTimeField(auto_now_add=True, null=True)
     address = models.CharField(max_length=500)
     phone_number = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     photo = models.ImageField(upload_to=get_image_file_path)
+    # Product categories a user is interested in.
     interests = models.CharField(max_length=1000, blank=True)
+    # The push notification ID from user' mobile device.
+    # This key is used to send push notifications to the user.
     push_key = models.CharField(max_length=1000, blank=True)
 
     write_only = ('password',)
@@ -31,6 +35,8 @@ class CustomUser(AbstractUser):
 
 
 class ProductAd(models.Model):
+    """Database structure for a single product ad."""
+    # Ad poster ID
     owner = models.ForeignKey(AUTH_USER_MODEL, blank=False, related_name='ad')
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=70, blank=False)
@@ -55,17 +61,22 @@ class ProductAd(models.Model):
 
 
 class Bids(models.Model):
+    """Database structure for bids on an ad."""
+    # ID of the ad this bid is associatd to
     ad = models.ForeignKey(ProductAd, on_delete=models.CASCADE,
                            related_name='bids')
     bid_time = models.DateTimeField(auto_now_add=True)
+    # ID of the bidder
     bidder = models.ForeignKey(AUTH_USER_MODEL, blank=False,
                                related_name='bidder')
+    # Bid price
     bid = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
 
     def __str__(self):
         return '{} @ {}'.format(self.bidder, self.bid)
 
     def bidder_name(self):
+        """Return the name of the bidder on an ad."""
         return self.bidder.username
 
 
@@ -75,6 +86,7 @@ class ProductAdInline(admin.TabularInline):
 
 
 class AdCategories(models.Model):
+    """Ad categories set by the admin. example 'cars', 'estate'."""
 
     name = models.CharField(max_length=70, blank=False, unique=True)
     photo = models.ImageField(upload_to=get_image_file_path, blank=False)
@@ -82,11 +94,15 @@ class AdCategories(models.Model):
 
 
 class Messages(models.Model):
+    """Database structure for chat between bidder and owner."""
     ad = models.ForeignKey(ProductAd, on_delete=models.CASCADE,
                            related_name='chat')
     message_time = models.DateTimeField(auto_now_add=True)
+    # Incoming or Outgoing
     direction = models.CharField(max_length=8, blank=False)
+    # Who sent this message, either its the bidder or the owner
     sender_name = models.CharField(max_length=70, blank=False)
+    # The message text
     message = models.CharField(max_length=2000, blank=False)
     # To keep a track of to whom this message thread is associated to
     bidder_name = models.CharField(max_length=70, blank=False)
