@@ -303,3 +303,16 @@ class MessagesView(ListCreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, *args, **kwargs):
+        ad_id = kwargs.get('pk')
+        ad = ProductAd.objects.get(id=ad_id)
+        # If the ad poster is the owner then just return all messages on it
+        if ad.owner.username == request.user.username:
+            return super().get(request, *args, **kwargs)
+
+        all_messages_for_user = Messages.objects.filter(
+            bidder_name=request.user.username, ad=ad_id)
+
+        serializer = MessagesSerializer(all_messages_for_user, many=True)
+        return Response(serializer.data)
