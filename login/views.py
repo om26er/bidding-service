@@ -316,3 +316,19 @@ class MessagesView(ListCreateAPIView):
 
         serializer = MessagesSerializer(all_messages_for_user, many=True)
         return Response(serializer.data)
+
+
+class MessengerNames(ListAPIView):
+
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        ad_id = kwargs.get('pk')
+        all_messages_for_ad = Messages.objects.filter(ad=ad_id)
+        bidders = []
+        for message in all_messages_for_ad:
+            if message.bidder_name not in bidders:
+                bidders.append(message.bidder_name)
+
+        data = {'messengers': bidders}
+        return Response(data, status=status.HTTP_200_OK)

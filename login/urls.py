@@ -45,6 +45,10 @@ urlpatterns = [
     url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/messages$',
         views.MessagesView.as_view()),
 
+    # Get names of all people who messages on an ad.
+    url(r'^api/users/(?P<username>\w+)/ads/(?P<pk>[0-9]+)/messages/names$',
+        views.MessengerNames.as_view()),
+
     # Get all the ads a user bid on
     url(r'^api/users/(?P<username>\w+)/bids$', views.UserBidsView.as_view()),
 
