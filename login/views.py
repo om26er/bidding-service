@@ -33,6 +33,9 @@ from login import helpers
 from rest_framework.authentication import SessionAuthentication
 
 
+TWENTY_FOUR_HOURS = 1440
+
+
 class CsrfExemptSessionAuthentication(SessionAuthentication):
 
     def enforce_csrf(self, request):
@@ -108,7 +111,14 @@ class UserPostAdView(APIView):
         serializer = AdSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=request.user)
-            # helpers.delete_ad(serializer.data.get('id'), 60)
+            # After saving the ad, send a push notification to all the
+            # subscribed users for the newly created ad category.
+            data = dict(serializer.data)
+            data.update({'message_type': 'new_ad_posted'})
+            helpers.send_push_by_subscribed_categories(
+                data, serializer.data.get('category'))
+            # Set an alarm to delete the ad after 24Hours
+            helpers.delete_ad(data.get('id'), delay=TWENTY_FOUR_HOURS)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
