@@ -205,14 +205,29 @@ class UserBidsView(ListAPIView):
         return [bid.ad for bid in bids]
 
 
-class UserAdView(APIView):
+class UserAdView(RetrieveUpdateDestroyAPIView):
 
     permission_classes = (IsOwner, )
 
-    def get(self, request, username, pk, format=None):
-        ad = helpers.get_ad_by_primary_key(self, request, pk)
+    def get(self, request, *args, **kwargs):
+        ad = helpers.get_ad_by_primary_key(self, request, kwargs.get('pk'))
         serializer = AdSerializer(ad)
         return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        ad_id = int(kwargs.get('pk'))
+        ad = ProductAd.objects.get(id=ad_id)
+        serializer = AdSerializer(ad, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        ad_id = int(kwargs.get('pk'))
+        ad = ProductAd.objects.get(id=ad_id)
+        ad.delete()
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class UserAdsList(ListAPIView):
