@@ -32,8 +32,10 @@ from login import helpers
 
 from rest_framework.authentication import SessionAuthentication
 
-
-TWENTY_FOUR_HOURS = 1440
+ONE_SECOND = 1
+ONE_MINUTE = ONE_SECOND * 60
+ONE_HOUR = ONE_MINUTE * 60
+TWENTY_FOUR_HOURS = ONE_HOUR * 24
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
