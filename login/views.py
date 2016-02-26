@@ -15,6 +15,7 @@ from login.models import(
     Bids,
     AdCategories,
     Messages,
+    UserReview,
 )
 from login.serializers import(
     UserSerializer,
@@ -24,7 +25,8 @@ from login.serializers import(
     AdBidSerializer,
     AdCategoriesSerializer,
     BidsSerializer,
-    MessagesSerializer
+    MessagesSerializer,
+    UserReviewSerializer,
 )
 from login.permissions import IsOwner
 from login import helpers
@@ -32,8 +34,10 @@ from login import helpers
 
 from rest_framework.authentication import SessionAuthentication
 
-
-TWENTY_FOUR_HOURS = 1440
+ONE_SECOND = 1
+ONE_MINUTE = ONE_SECOND * 60
+ONE_HOUR = ONE_MINUTE * 60
+TWENTY_FOUR_HOURS = ONE_HOUR * 24
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
@@ -293,6 +297,22 @@ class PushKeyView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserReviewView(ListCreateAPIView):
+
+    serializer_class = UserReviewSerializer
+    queryset = UserReview.objects.all()
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, *args, **kwargs):
+        user = CustomUser.objects.get(username=kwargs.get('username'))
+        request.data.update({'reviewer': request.user.id})
+        request.data.update({'reviewee': user.id})
+        return super().post(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
 class CategoriesView(ListAPIView):
 
     serializer_class = AdCategoriesSerializer
@@ -308,7 +328,8 @@ class MessagesView(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated, )
 
     def get_queryset(self):
-        return Messages.objects.filter(ad_id=self.kwargs.get('pk'))
+        return Messages.objects.filter(
+            ad_id=self.kwargs.get('pk')).order_by('-message_time')
 
     def _get_direction(self, sender_name, ad_owner_name):
         if sender_name == ad_owner_name:
@@ -339,7 +360,8 @@ class MessagesView(ListCreateAPIView):
         all_messages_for_user = Messages.objects.filter(
             bidder_name=request.user.username, ad=ad_id)
 
-        serializer = MessagesSerializer(all_messages_for_user, many=True)
+        serializer = MessagesSerializer(
+            all_messages_for_user.order_by('-message_time'), many=True)
         return Response(serializer.data)
 
 

@@ -82,11 +82,12 @@ def _send_half_time_no_bid_notification(pk):
 
 
 def send_push_by_subscribed_categories(message_data, category):
-    users = CustomUser.objects.filter(
-        interests__in=category, is_active=True)
+    users = CustomUser.objects.filter(interests__contains=category,
+                                      is_active=True)
     push_ids = []
     for user in users:
-        push_ids.append(user.push_key)
+        if user.push_key:
+            push_ids.append(user.push_key)
 
     if push_ids:
         _send_push_notification(message_data, reg_ids=push_ids)

@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^api/users/list$', views.UsersList.as_view()),
     # Get details for a specific user
     url(r'^api/users/(?P<username>\w+)/$', views.UserDetail.as_view()),
+    # Post and Get review for a user
+    url(r'^api/users/(?P<username>\w+)/reviews/$',
+        views.UserReviewView.as_view()),
     # Post an ad
     url(r'^api/users/(?P<username>\w+)/ads/post$',
         views.UserPostAdView.as_view()),
