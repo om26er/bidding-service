@@ -310,7 +310,8 @@ class MessagesView(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated, )
 
     def get_queryset(self):
-        return Messages.objects.filter(ad_id=self.kwargs.get('pk'))
+        return Messages.objects.filter(
+            ad_id=self.kwargs.get('pk')).order_by('-message_time')
 
     def _get_direction(self, sender_name, ad_owner_name):
         if sender_name == ad_owner_name:
@@ -341,7 +342,8 @@ class MessagesView(ListCreateAPIView):
         all_messages_for_user = Messages.objects.filter(
             bidder_name=request.user.username, ad=ad_id)
 
-        serializer = MessagesSerializer(all_messages_for_user, many=True)
+        serializer = MessagesSerializer(
+            all_messages_for_user.order_by('-message_time'), many=True)
         return Response(serializer.data)
 
 
