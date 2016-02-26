@@ -52,6 +52,9 @@ class ProductAd(models.Model):
     photo6 = models.ImageField(upload_to=get_image_file_path, blank=True)
     photo7 = models.ImageField(upload_to=get_image_file_path, blank=True)
     photo8 = models.ImageField(upload_to=get_image_file_path, blank=True)
+    # The estimated number of hours the product will be shipped, after
+    # bidding closes.
+    delivery_time = models.CharField(max_length=70, null=True, blank=False)
 
     class Meta:
         ordering = ('-created', )
