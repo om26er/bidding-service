@@ -34,6 +34,23 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'username'
 
 
+class UserReview(models.Model):
+    """Review for an ad poster. Text + Stars."""
+    reviewee = models.ForeignKey(CustomUser, on_delete=models.CASCADE,
+                                 related_name='reviewee')
+    reviewer = models.ForeignKey(AUTH_USER_MODEL, blank=False,
+                                 related_name='reviewer')
+    review_time = models.DateTimeField(auto_now_add=True)
+    review = models.CharField(max_length=2000, blank=True)
+    stars = models.IntegerField(blank=False)
+
+    def reviewer_name(self):
+        return self.reviewer.username
+
+    def reviewee_name(self):
+        return self.reviewee.username
+
+
 class ProductAd(models.Model):
     """Database structure for a single product ad."""
     # Ad poster ID

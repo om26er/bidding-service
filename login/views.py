@@ -15,6 +15,7 @@ from login.models import(
     Bids,
     AdCategories,
     Messages,
+    UserReview,
 )
 from login.serializers import(
     UserSerializer,
@@ -24,7 +25,8 @@ from login.serializers import(
     AdBidSerializer,
     AdCategoriesSerializer,
     BidsSerializer,
-    MessagesSerializer
+    MessagesSerializer,
+    UserReviewSerializer,
 )
 from login.permissions import IsOwner
 from login import helpers
@@ -293,6 +295,22 @@ class PushKeyView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserReviewView(ListCreateAPIView):
+
+    serializer_class = UserReviewSerializer
+    queryset = UserReview.objects.all()
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, *args, **kwargs):
+        user = CustomUser.objects.get(username=kwargs.get('username'))
+        request.data.update({'reviewer': request.user.id})
+        request.data.update({'reviewee': user.id})
+        return super().post(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class CategoriesView(ListAPIView):

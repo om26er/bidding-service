@@ -3,10 +3,11 @@ from rest_framework import serializers
 from login.models import(
     CustomUser,
     ProductAd,
-    # Comments,
+    UserReview,
     Bids,
     AdCategories,
-    Messages)
+    Messages
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,6 +22,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'address', 'phone_number',
                   'city', 'photo', 'interests', 'push_notifications_key',
                   'id')
+
+
+class UserReviewSerializer(serializers.ModelSerializer):
+
+    review = serializers.CharField(required=False)
+    stars = serializers.IntegerField(required=True)
+    reviewer_name = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = UserReview
+        fields = ('review', 'stars', 'reviewer', 'review_time',
+                  'reviewer_name', 'reviewee', 'reviewee_name')
 
 
 class UserInterestsSerializer(serializers.Serializer):
