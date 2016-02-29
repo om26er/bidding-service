@@ -49,16 +49,20 @@ def _really_delete(pk):
     notify_data = {}
     try:
         ad = ProductAd.objects.get(pk=pk)
-        serializer = AdSerializer(ad)
         notify_data.update({'ad_id': ad.id})
+        notify_data.update({'ad_owner': ad.owner})
         if not did_someone_bid(pk):
+            serializer = AdSerializer(ad)
             ad.delete()
             notify_data.update({'type': 'ad_expired'})
             send_push_by_subscribed_categories(notify_data,
                                                serializer.data.get('category'))
         else:
             # Sell to the highest bidder
-            pass
+            highest_bid = get_highest_bid(pk)
+            notify_data.update({'type': 'sold_to_highest_bidder'})
+            notify_data.update({'price': highest_bid.bid})
+            notify_data.update({'winner_name': highest_bid.bidder_name()})
     except ProductAd.DoesNotExist:
         # Just do nothing if the ad was already deleted.
         pass
@@ -82,6 +86,7 @@ def _send_half_time_no_bid_notification(pk):
         notify_data = {}
         notify_data.update({'ad_id': ad.id})
         notify_data.update({'type': 'half_time_no_bid'})
+        notify_data.update({'ad_owner': ad.owner})
         send_push_by_subscribed_categories(notify_data, ad.category)
 
 
@@ -112,3 +117,15 @@ def get_user_id_by_name(username):
 def did_user_already_bid(ad_id, bidder_id):
     bids = Bids.objects.filter(ad_id=ad_id, bidder_id=bidder_id)
     return len(bids) > 0
+
+
+def get_highest_bid(pk):
+    bids = Bids.objects.filter(ad=pk)
+    highest_bid = None
+    last_bid = 0.0
+    for bid in bids:
+        if bid.bid > last_bid:
+            last_bid = bid.bid
+            highest_bid = bid
+
+    return highest_bid

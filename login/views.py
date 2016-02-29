@@ -119,6 +119,7 @@ class UserPostAdView(APIView):
             notify_data = {}
             notify_data.update({'type': 'new_ad_posted'})
             notify_data.update({'ad_id': new_ad_id})
+            notify_data.update({'ad_owner': serializer.data.get('owner')})
             helpers.send_push_by_subscribed_categories(
                 notify_data, serializer.data.get('category'))
             # Set an alarm to delete the ad after 24Hours
