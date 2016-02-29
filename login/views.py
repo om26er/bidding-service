@@ -118,7 +118,7 @@ class UserPostAdView(APIView):
             # After saving the ad, send a push notification to all the
             # subscribed users for the newly created ad category.
             data = dict(serializer.data)
-            data.update({'message_type': 'new_ad_posted'})
+            data.update({'type': 'new_ad_posted'})
             helpers.send_push_by_subscribed_categories(
                 data, serializer.data.get('category'))
             # Set an alarm to delete the ad after 24Hours

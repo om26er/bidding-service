@@ -46,7 +46,7 @@ def _send_push_notification(data, reg_ids):
 
 def _really_delete(pk):
     """Delete an ad by primary key and send a push notification."""
-    type_data = {'message_type': 'ad_expired'}
+    type_data = {'type': 'ad_expired'}
     try:
         ad = ProductAd.objects.get(pk=pk)
         serializer = AdSerializer(ad)
@@ -77,7 +77,7 @@ def _send_half_time_no_bid_notification(pk):
         ad = ProductAd.objects.get(pk=pk)
         serializer = AdSerializer(ad)
         data = dict(serializer.data)
-        data.update({'message_type': 'half_time_no_bid'})
+        data.update({'type': 'half_time_no_bid'})
         send_push_by_subscribed_categories(data, data.get('category'))
 
 
