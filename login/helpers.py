@@ -40,8 +40,8 @@ def does_user_exist(username):
 
 def _send_push_notification(data, reg_ids):
     from gcm import GCM
-    gcm = GCM('AIzaSyAsl2hfesm538eZUrhvIwGHCZeoRB4OvjS')
-    gcm.plaintext_request(registration_ids=reg_ids, data=data)
+    gcm = GCM('AIzaSyAKqZ5WrMh3ZinQLkVH8ftdE2qi1DRCCZg')
+    gcm.json_request(registration_ids=reg_ids, data=data)
 
 
 def _really_delete(pk):
