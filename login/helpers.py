@@ -46,15 +46,19 @@ def _send_push_notification(data, reg_ids):
 
 def _really_delete(pk):
     """Delete an ad by primary key and send a push notification."""
-    type_data = {'type': 'ad_expired'}
+    notify_data = {}
     try:
         ad = ProductAd.objects.get(pk=pk)
         serializer = AdSerializer(ad)
-        data = dict(serializer.data)
-        data.update(type_data)
-        ad_category = data.get('category')
-        ad.delete()
-        send_push_by_subscribed_categories(data, ad_category)
+        notify_data.update({'ad_id': ad.id})
+        if not did_someone_bid(pk):
+            ad.delete()
+            notify_data.update({'type': 'ad_expired'})
+            send_push_by_subscribed_categories(notify_data,
+                                               serializer.data.get('category'))
+        else:
+            # Sell to the highest bidder
+            pass
     except ProductAd.DoesNotExist:
         # Just do nothing if the ad was already deleted.
         pass
@@ -75,10 +79,10 @@ def delete_ad(pk, delay):
 def _send_half_time_no_bid_notification(pk):
     if not did_someone_bid(pk):
         ad = ProductAd.objects.get(pk=pk)
-        serializer = AdSerializer(ad)
-        data = dict(serializer.data)
-        data.update({'type': 'half_time_no_bid'})
-        send_push_by_subscribed_categories(data, data.get('category'))
+        notify_data = {}
+        notify_data.update({'ad_id': ad.id})
+        notify_data.update({'type': 'half_time_no_bid'})
+        send_push_by_subscribed_categories(notify_data, ad.category)
 
 
 def send_push_by_subscribed_categories(message_data, category):
