@@ -40,7 +40,7 @@ def does_user_exist(username):
 
 def _send_push_notification(data, reg_ids):
     from gcm import GCM
-    gcm = GCM('AIzaSyDvMYsVLk80XXo_omD7mjS1TfzTNDQkqFk')
+    gcm = GCM('AIzaSyAsl2hfesm538eZUrhvIwGHCZeoRB4OvjS')
     gcm.plaintext_request(registration_ids=reg_ids, data=data)
 
 
