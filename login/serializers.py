@@ -63,6 +63,7 @@ class AdSerializer(serializers.ModelSerializer):
     currency = serializers.CharField(required=True)
     delivery_time = serializers.CharField(required=True)
     owner = serializers.CharField(read_only=True)
+    sold = serializers.BooleanField(required=False)
 
     photo2 = serializers.ImageField(required=False)
     photo3 = serializers.ImageField(required=False)
@@ -77,7 +78,7 @@ class AdSerializer(serializers.ModelSerializer):
         fields = ('id', 'created', 'title', 'description', 'category', 'price',
                   'photo1', 'photo2', 'photo3', 'photo4', 'photo5', 'photo6',
                   'photo7', 'photo8', 'currency', 'bids', 'delivery_time',
-                  'owner')
+                  'owner', 'sold')
 
 
 class AdBidSerializer(serializers.ModelSerializer):

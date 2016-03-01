@@ -51,8 +51,8 @@ def _really_delete(pk):
         ad = ProductAd.objects.get(pk=pk)
         notify_data.update({'ad_id': ad.id})
         notify_data.update({'ad_owner': str(ad.owner)})
+        serializer = AdSerializer(ad)
         if not did_someone_bid(pk):
-            serializer = AdSerializer(ad)
             ad.delete()
             notify_data.update({'type': 'ad_expired'})
             send_push_by_subscribed_categories(notify_data,
@@ -63,6 +63,10 @@ def _really_delete(pk):
             notify_data.update({'type': 'sold_to_highest_bidder'})
             notify_data.update({'price': highest_bid.bid})
             notify_data.update({'winner_name': highest_bid.bidder_name()})
+            ad.sold = True
+            ad.save()
+            send_push_by_subscribed_categories(notify_data,
+                                               serializer.data.get('category'))
     except ProductAd.DoesNotExist:
         # Just do nothing if the ad was already deleted.
         pass
