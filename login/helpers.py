@@ -50,7 +50,7 @@ def _really_delete(pk):
     try:
         ad = ProductAd.objects.get(pk=pk)
         notify_data.update({'ad_id': ad.id})
-        notify_data.update({'ad_owner': ad.owner})
+        notify_data.update({'ad_owner': str(ad.owner)})
         if not did_someone_bid(pk):
             serializer = AdSerializer(ad)
             ad.delete()
@@ -86,7 +86,7 @@ def _send_half_time_no_bid_notification(pk):
         notify_data = {}
         notify_data.update({'ad_id': ad.id})
         notify_data.update({'type': 'half_time_no_bid'})
-        notify_data.update({'ad_owner': ad.owner})
+        notify_data.update({'ad_owner': str(ad.owner)})
         send_push_by_subscribed_categories(notify_data, ad.category)
 
 
