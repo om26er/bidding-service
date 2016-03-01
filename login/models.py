@@ -72,6 +72,7 @@ class ProductAd(models.Model):
     # The estimated number of hours the product will be shipped, after
     # bidding closes.
     delivery_time = models.CharField(max_length=70, null=True, blank=False)
+    sold = models.NullBooleanField(blank=True)
 
     class Meta:
         ordering = ('-created', )

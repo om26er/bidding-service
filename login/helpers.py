@@ -40,21 +40,33 @@ def does_user_exist(username):
 
 def _send_push_notification(data, reg_ids):
     from gcm import GCM
-    gcm = GCM('AIzaSyDvMYsVLk80XXo_omD7mjS1TfzTNDQkqFk')
-    gcm.plaintext_request(registration_ids=reg_ids, data=data)
+    gcm = GCM('AIzaSyAKqZ5WrMh3ZinQLkVH8ftdE2qi1DRCCZg')
+    gcm.json_request(registration_ids=reg_ids, data=data)
 
 
 def _really_delete(pk):
     """Delete an ad by primary key and send a push notification."""
-    type_data = {'message_type': 'ad_expired'}
+    notify_data = {}
     try:
         ad = ProductAd.objects.get(pk=pk)
+        notify_data.update({'ad_id': ad.id})
+        notify_data.update({'ad_owner': str(ad.owner)})
         serializer = AdSerializer(ad)
-        data = dict(serializer.data)
-        data.update(type_data)
-        ad_category = data.get('category')
-        ad.delete()
-        send_push_by_subscribed_categories(data, ad_category)
+        if not did_someone_bid(pk):
+            ad.delete()
+            notify_data.update({'type': 'ad_expired'})
+            send_push_by_subscribed_categories(notify_data,
+                                               serializer.data.get('category'))
+        else:
+            # Sell to the highest bidder
+            highest_bid = get_highest_bid(pk)
+            notify_data.update({'type': 'sold_to_highest_bidder'})
+            notify_data.update({'price': highest_bid.bid})
+            notify_data.update({'winner_name': highest_bid.bidder_name()})
+            ad.sold = True
+            ad.save()
+            send_push_by_subscribed_categories(notify_data,
+                                               serializer.data.get('category'))
     except ProductAd.DoesNotExist:
         # Just do nothing if the ad was already deleted.
         pass
@@ -75,10 +87,11 @@ def delete_ad(pk, delay):
 def _send_half_time_no_bid_notification(pk):
     if not did_someone_bid(pk):
         ad = ProductAd.objects.get(pk=pk)
-        serializer = AdSerializer(ad)
-        data = dict(serializer.data)
-        data.update({'message_type': 'half_time_no_bid'})
-        send_push_by_subscribed_categories(data, data.get('category'))
+        notify_data = {}
+        notify_data.update({'ad_id': ad.id})
+        notify_data.update({'type': 'half_time_no_bid'})
+        notify_data.update({'ad_owner': str(ad.owner)})
+        send_push_by_subscribed_categories(notify_data, ad.category)
 
 
 def send_push_by_subscribed_categories(message_data, category):
@@ -108,3 +121,15 @@ def get_user_id_by_name(username):
 def did_user_already_bid(ad_id, bidder_id):
     bids = Bids.objects.filter(ad_id=ad_id, bidder_id=bidder_id)
     return len(bids) > 0
+
+
+def get_highest_bid(pk):
+    bids = Bids.objects.filter(ad=pk)
+    highest_bid = None
+    last_bid = 0.0
+    for bid in bids:
+        if bid.bid > last_bid:
+            last_bid = bid.bid
+            highest_bid = bid
+
+    return highest_bid

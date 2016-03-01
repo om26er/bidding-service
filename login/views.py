@@ -37,7 +37,8 @@ from rest_framework.authentication import SessionAuthentication
 ONE_SECOND = 1
 ONE_MINUTE = ONE_SECOND * 60
 ONE_HOUR = ONE_MINUTE * 60
-TWENTY_FOUR_HOURS = ONE_HOUR * 24
+# TWENTY_FOUR_HOURS = ONE_HOUR * 24
+TWENTY_FOUR_HOURS = ONE_MINUTE * 10  # Hack for now to make it quick
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
@@ -115,14 +116,15 @@ class UserPostAdView(APIView):
         serializer = AdSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(owner=request.user)
-            # After saving the ad, send a push notification to all the
-            # subscribed users for the newly created ad category.
-            data = dict(serializer.data)
-            data.update({'message_type': 'new_ad_posted'})
+            new_ad_id = serializer.data.get('id')
+            notify_data = {}
+            notify_data.update({'type': 'new_ad_posted'})
+            notify_data.update({'ad_id': new_ad_id})
+            notify_data.update({'ad_owner': serializer.data.get('owner')})
             helpers.send_push_by_subscribed_categories(
-                data, serializer.data.get('category'))
+                notify_data, serializer.data.get('category'))
             # Set an alarm to delete the ad after 24Hours
-            helpers.delete_ad(data.get('id'), delay=TWENTY_FOUR_HOURS)
+            helpers.delete_ad(new_ad_id, delay=TWENTY_FOUR_HOURS)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
