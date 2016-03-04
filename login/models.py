@@ -19,7 +19,7 @@ def get_image_file_path(instance, filename):
 
 class CustomUser(AbstractUser):
     """Structure for a user account database table."""
-    created = models.DateTimeField(auto_now_add=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
     address = models.CharField(max_length=500)
     phone_number = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
@@ -60,7 +60,7 @@ class ProductAd(models.Model):
     description = models.CharField(max_length=4000, blank=False)
     category = models.CharField(max_length=100, blank=False)
     price = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
-    currency = models.CharField(max_length=3, null=True, blank=False)
+    currency = models.CharField(max_length=3, blank=False)
     photo1 = models.ImageField(upload_to=get_image_file_path)
     photo2 = models.ImageField(upload_to=get_image_file_path, blank=True)
     photo3 = models.ImageField(upload_to=get_image_file_path, blank=True)
@@ -71,8 +71,9 @@ class ProductAd(models.Model):
     photo8 = models.ImageField(upload_to=get_image_file_path, blank=True)
     # The estimated number of hours the product will be shipped, after
     # bidding closes.
-    delivery_time = models.CharField(max_length=70, null=True, blank=False)
-    sold = models.NullBooleanField(blank=True)
+    delivery_time = models.CharField(max_length=70, blank=False)
+    sold = models.BooleanField(default=False)
+    sold_to = models.CharField(max_length=200, blank=True)
 
     class Meta:
         ordering = ('-created', )
