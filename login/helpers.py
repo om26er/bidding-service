@@ -62,8 +62,9 @@ def _really_delete(pk):
             highest_bid = get_highest_bid(pk)
             notify_data.update({'type': 'sold_to_highest_bidder'})
             notify_data.update({'price': highest_bid.bid})
-            notify_data.update({'winner_name': highest_bid.bidder_name()})
+            notify_data.update({'sold_to': highest_bid.bidder_name()})
             ad.sold = True
+            ad.sold_to = highest_bid.bidder_name()
             ad.save()
             send_push_by_subscribed_categories(notify_data,
                                                serializer.data.get('category'))
