@@ -61,7 +61,7 @@ def _really_delete(pk):
             # Sell to the highest bidder
             highest_bid = get_highest_bid(pk)
             notify_data.update({'type': 'sold_to_highest_bidder'})
-            notify_data.update({'price': highest_bid.bid})
+            notify_data.update({'price': str(highest_bid.bid)})
             notify_data.update({'sold_to': highest_bid.bidder_name()})
             ad.sold = True
             ad.sold_to = highest_bid.bidder_name()
