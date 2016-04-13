@@ -81,6 +81,9 @@ class ProductAd(models.Model):
     def __str__(self):
         return '{} @ {}'.format(self.title, self.price)
 
+    def owner_email(self):
+        return CustomUser.objects.get(id=self.owner.id).email
+
 
 class Bids(models.Model):
     """Database structure for bids on an ad."""
