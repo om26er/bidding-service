@@ -82,7 +82,7 @@ class ProductAd(models.Model):
         return '{} @ {}'.format(self.title, self.price)
 
     def owner_email(self):
-        return CustomUser.objects.get(id=self.owner).email
+        return CustomUser.objects.get(id=self.owner.id).email
 
 
 class Bids(models.Model):
