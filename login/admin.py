@@ -4,8 +4,23 @@ from login.models import(
     CustomUser,
     ProductAd,
     AdCategories,
-    ProductAdInline
+    ProductAdInline,
+    UserReview,
+    Bids,
+    Messages
 )
+
+
+class UserReviewAdmin(admin.ModelAdmin):
+    pass
+
+
+class BidsAdmin(admin.ModelAdmin):
+    pass
+
+
+class MessagesAdmin(admin.ModelAdmin):
+    pass
 
 
 class UserProfileAdmin(admin.ModelAdmin):
@@ -36,7 +51,8 @@ class AdCategoriesAdmin(admin.ModelAdmin):
     list_per_page = 15
     list_display = ('name', 'photo')
 
-
+admin.site.register(UserReview, UserReviewAdmin)
+admin.site.register(Bids, BidsAdmin)
 admin.site.register(CustomUser, UserProfileAdmin)
 admin.site.register(ProductAd, AdAdmin)
 admin.site.register(AdCategories, AdCategoriesAdmin)
