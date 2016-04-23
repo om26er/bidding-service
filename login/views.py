@@ -302,8 +302,11 @@ class PushKeyView(APIView):
 class UserReviewView(ListCreateAPIView):
 
     serializer_class = UserReviewSerializer
-    queryset = UserReview.objects.all()
     permission_classes = (permissions.IsAuthenticated, )
+
+    def get_queryset(self):
+        user = CustomUser.objects.get(username=self.kwargs.get('username'))
+        return UserReview.objects.filter(review=user.id)
 
     def post(self, request, *args, **kwargs):
         user = CustomUser.objects.get(username=kwargs.get('username'))
